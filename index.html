@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="MedTracker"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#080e1c"/>
+<link rel="manifest" id="pwa-manifest"/>
+<title>MedTracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#080e1c;--s1:#101624;--s2:#19243a;--s3:#212f47;
+  --bd:rgba(148,163,184,.10);--bd2:rgba(148,163,184,.22);
+  --tx:#eef2ff;--tx2:#8b9cc0;--tx3:#475b7a;
+  --blue:#60a5fa;--bluebg:rgba(96,165,250,.12);
+  --green:#4ade80;--greenbg:rgba(74,222,128,.12);
+  --red:#f87171;--redbg:rgba(248,113,113,.12);
+  --amber:#fbbf24;--amberbg:rgba(251,191,36,.12);
+  --purple:#a78bfa;--purplebg:rgba(167,139,250,.12);
+  --r:14px;--rs:9px;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
+  --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,-apple-system,sans-serif;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+
+/* HEADER */
+#hdr{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;
+  padding:calc(var(--st)+10px) 16px 10px;background:var(--bg);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+#hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
+#clock{font-size:12px;font-weight:500;color:var(--tx2);font-family:'DM Mono',monospace;
+  background:var(--s2);padding:5px 10px;border-radius:999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
+
+/* CONTENT */
+#content{flex:1;overflow-y:auto;overflow-x:hidden;
+  padding-top:calc(58px + var(--st));padding-bottom:calc(68px + var(--sb));
+  padding-left:var(--sl);padding-right:var(--sr)}
+#content::-webkit-scrollbar{width:3px}
+#content::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+/* NAV */
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;
+  background:var(--bg);border-top:1px solid var(--bd);display:flex;padding-bottom:var(--sb)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 6px;
+  background:none;border:none;cursor:pointer;color:var(--tx3);transition:color .15s;font-family:inherit;min-width:0}
+.nb.on{color:var(--blue)}
+.nb svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nb span{font-size:10px;font-weight:500;white-space:nowrap}
+
+/* PAGES */
+.pg{display:none;padding:13px 13px 4px}
+.pg.on{display:block}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:11px}
+.ctitle{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:11px}
+
+/* FORMS */
+.fg{margin-bottom:9px}
+.lbl{font-size:12px;color:var(--tx3);display:block;margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;background:var(--s2);border:1px solid var(--bd2);border-radius:var(--rs);
+  color:var(--tx);font-size:16px;font-family:inherit;padding:10px 12px;outline:none;
+  -webkit-appearance:none;appearance:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+input[type=number]{font-family:'DM Mono',monospace;font-size:15px}
+input[type=time],input[type=date]{font-size:14px;color-scheme:dark}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b9cc0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;padding-right:34px}
+input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
+.frow{display:flex;gap:8px}
+.frow>.fg{flex:1;margin-bottom:0}
+
+/* BUTTONS */
+.btn{width:100%;padding:12px;border-radius:var(--rs);border:none;font-size:15px;font-weight:600;
+  font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s,transform .1s;-webkit-appearance:none}
+.btn:active{transform:scale(.97);opacity:.9}
+.btnp{background:var(--blue);color:#080e1c}
+.btng{background:var(--s2);color:var(--tx2);border:1px solid var(--bd2)}
+.btna{background:var(--amber);color:#080e1c}
+.btnr{background:var(--redbg);color:var(--red);border:1px solid rgba(248,113,113,.25)}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:8px}
+
+/* DOSE SLOT */
+.ds{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bd);
+  border-radius:var(--rs);padding:9px 12px;margin-bottom:7px}
+.ds input[type=time]{flex:1;padding:6px 8px;font-size:14px;min-width:0}
+.ds input[type=number]{width:66px;flex:none;padding:6px 8px;font-size:14px;text-align:center}
+.ds .ulbl{font-size:12px;color:var(--tx2);white-space:nowrap;min-width:28px}
+.ds .xbtn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:20px;padding:0 3px;line-height:1;border-radius:6px;flex-shrink:0}
+.ds .xbtn:active{color:var(--red)}
+.add-slot{background:none;border:1.5px dashed var(--bd2);border-radius:var(--rs);color:var(--tx2);
+  font-size:13px;padding:10px;width:100%;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:9px;transition:border-color .15s}
+.add-slot:active{border-color:var(--blue);color:var(--blue)}
+
+/* MED LIST */
+.med-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:13px 15px;margin-bottom:9px}
+.med-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.med-name{font-size:15px;font-weight:600}
+.med-sub{font-size:12px;color:var(--tx2);margin-top:2px}
+.med-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.chip{background:var(--bluebg);border:1px solid rgba(96,165,250,.2);border-radius:999px;
+  font-size:11px;font-weight:500;color:var(--blue);padding:3px 10px;white-space:nowrap}
+.icon-row{display:flex;gap:4px;flex-shrink:0}
+.ibtn{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;color:var(--tx3);font-size:16px;transition:color .15s;line-height:1}
+.ibtn:active{color:var(--blue)}
+.ibtn.del:active{color:var(--red)}
+
+/* STOCK CARDS */
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:13px 16px;margin-bottom:9px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.sc.ok::before{background:var(--green)}.sc.low::before{background:var(--amber)}.sc.out::before{background:var(--red)}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:8px}
+.sc-name{font-size:15px;font-weight:600}
+.sc-qty{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-.5px;margin:2px 0 3px}
+.sc-qty.ok{color:var(--green)}.sc-qty.low{color:var(--amber)}.sc-qty.out{color:var(--red)}
+.sc-meta{font-size:12px;color:var(--tx3)}
+.sc-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.sc-edit{background:none;border:1px solid var(--bd2);color:var(--tx3);cursor:pointer;font-size:12px;padding:4px 9px;border-radius:7px;font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap}
+.sc-edit:active{color:var(--blue);border-color:var(--blue)}
+.badge-low{background:var(--amberbg);border:1px solid rgba(251,191,36,.25);color:var(--amber);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.badge-out{background:var(--redbg);border:1px solid rgba(248,113,113,.25);color:var(--red);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+
+/* TODAY DOSES */
+.dt{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd)}
+.dt:last-child{border-bottom:none}
+.dck{width:34px;height:34px;border-radius:50%;border:2px solid var(--bd2);background:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.dck.yes{background:var(--green);border-color:var(--green)}
+.dck svg{width:15px;height:15px;stroke:#080e1c;stroke-width:2.8;fill:none}
+.di{flex:1;min-width:0}
+.di-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.di-sub{font-size:11px;color:var(--tx3);margin-top:2px}
+.di-qty{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;color:var(--tx2);white-space:nowrap;flex-shrink:0}
+.overdue-row{opacity:.5}
+
+/* PURCHASE LIST */
+.pi{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.pi:last-child{border-bottom:none}
+.pi-ico{width:34px;height:34px;border-radius:10px;background:var(--greenbg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.pi-body{flex:1;min-width:0}
+.pi-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pi-meta{font-size:11px;color:var(--tx3);margin-top:2px}
+.pi-qty{font-size:13px;font-weight:600;color:var(--green);font-family:'DM Mono',monospace;white-space:nowrap}
+
+/* MODAL */
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;
+  align-items:flex-end;justify-content:center;padding-bottom:0}
+#overlay.on{display:flex}
+#modal{background:var(--s1);border:1px solid var(--bd2);border-radius:var(--r) var(--r) 0 0;
+  width:100%;max-width:480px;padding:18px 18px calc(20px + var(--sb));max-height:88vh;overflow-y:auto;
+  animation:slideUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modal-hdr h2{font-size:16px;font-weight:600}
+.modal-x{background:none;border:none;color:var(--tx3);font-size:24px;cursor:pointer;padding:0 2px;line-height:1}
+
+/* REMINDER BANNER */
+#rbanner{display:none;position:fixed;top:calc(var(--st)+62px);left:50%;transform:translateX(-50%);
+  width:calc(100% - 20px);max-width:460px;z-index:400;
+  background:linear-gradient(135deg,#5b21b6,#4338ca);
+  border-radius:var(--r);padding:13px 14px 12px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+#rbanner.on{display:block;animation:slideDown .3s cubic-bezier(.4,0,.2,1)}
+@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.rb-ttl{font-size:13px;font-weight:600;color:#fff;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.rb-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.rb-item{font-size:12px;color:rgba(255,255,255,.85);display:flex;align-items:flex-start;gap:5px}
+.rb-item::before{content:'💊';font-size:11px;flex-shrink:0;margin-top:1px}
+.rb-actions{display:flex;gap:7px}
+.rb-btn{font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;border:none;font-family:inherit;flex:1;text-align:center}
+.rb-go{background:#fff;color:#4338ca}
+.rb-dim{background:rgba(255,255,255,.18);color:#fff}
+.rb-x{position:absolute;top:10px;right:11px;background:none;border:none;color:rgba(255,255,255,.6);font-size:19px;cursor:pointer;padding:2px;line-height:1}
+
+/* NOTIF PERMISSION CARD */
+.np-card{background:var(--purplebg);border:1px solid rgba(167,139,250,.25);border-radius:var(--r);
+  padding:13px 15px;margin-bottom:11px}
+.np-inner{display:flex;gap:12px;align-items:flex-start}
+.np-icon{font-size:22px;flex-shrink:0}
+.np-body strong{font-size:14px;font-weight:600;color:var(--tx)}
+.np-body p{font-size:13px;color:var(--tx2);margin-top:3px;line-height:1.55}
+
+/* BACKUP TAB */
+.bk-row{display:flex;align-items:flex-start;gap:13px;padding:14px 0;border-bottom:1px solid var(--bd)}
+.bk-row:last-child{border-bottom:none}
+.bk-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.bk-body{flex:1}
+.bk-body strong{font-size:14px;font-weight:600;display:block;margin-bottom:3px}
+.bk-body p{font-size:12px;color:var(--tx2);line-height:1.55;margin-bottom:9px}
+.warn-box{background:var(--redbg);border:1px solid rgba(248,113,113,.2);border-radius:var(--rs);padding:9px 12px;font-size:12px;color:var(--red);margin-bottom:10px;line-height:1.5}
+.info-box{background:var(--bluebg);border:1px solid rgba(96,165,250,.2);border-radius:var(--rs);padding:9px 12px;font-size:12px;color:var(--blue);margin-bottom:10px;line-height:1.5}
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.step{counter-increment:step;display:flex;gap:8px;font-size:13px;color:var(--tx2);line-height:1.5}
+.step::before{content:counter(step);background:var(--s3);color:var(--tx2);font-size:11px;font-weight:600;
+  width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* TOAST */
+#toast{position:fixed;bottom:calc(74px + var(--sb));left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--s2);border:1px solid var(--bd2);border-radius:var(--rs);
+  padding:9px 18px;font-size:13px;font-weight:500;opacity:0;transition:all .22s;
+  pointer-events:none;white-space:nowrap;z-index:600;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:26px 0;color:var(--tx3);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <h1><span>💊</span>MedTracker</h1>
+  <div id="clock">--:-- --</div>
+</div>
+
+<!-- REMINDER BANNER -->
+<div id="rbanner">
+  <div class="rb-ttl">⏰ Missed dose reminder</div>
+  <div class="rb-list" id="rb-list"></div>
+  <div class="rb-actions">
+    <button class="rb-btn rb-go" onclick="goTo('dash');dimBanner()">Go to doses</button>
+    <button class="rb-btn rb-dim" onclick="dimBanner()">Dismiss</button>
+  </div>
+  <button class="rb-x" onclick="dimBanner()">×</button>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+
+  <!-- DASHBOARD -->
+  <div class="pg on" id="pg-dash">
+    <div id="np-wrap"></div>
+    <div class="card">
+      <div class="ctitle">Today's doses</div>
+      <div id="today-list"></div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Stock overview</div>
+      <div id="stock-list"></div>
+    </div>
+  </div>
+
+  <!-- MEDICINES -->
+  <div class="pg" id="pg-meds">
+    <div class="card" id="med-form-card">
+      <div class="ctitle" id="mfc-title">Add medicine</div>
+      <input type="hidden" id="med-eid"/>
+      <div class="frow">
+        <div class="fg" style="flex:2">
+          <label class="lbl">Medicine name</label>
+          <input type="text" id="med-name" placeholder="e.g. Metformin 500mg" autocomplete="off"/>
+        </div>
+        <div class="fg" style="flex:0 0 118px">
+          <label class="lbl">Unit</label>
+          <select id="med-unit" onchange="reSlots()">
+            <option>tab(s)</option><option>cap(s)</option><option>ml(s)</option>
+            <option>drop(s)</option><option>sachet(s)</option><option>mg</option>
+            <option>mcg</option><option>puff(s)</option><option>patch(es)</option><option>syrup(s)</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Dose schedule <span style="font-weight:400;color:var(--tx3)">(time + qty per dose)</span></label>
+        <div id="slots-wrap"></div>
+        <button class="add-slot" onclick="addSlot()">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add dose time
+        </button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btnp" onclick="saveMed()">Save Medicine</button>
+        <button class="btn btng btn-sm" id="med-cancel" onclick="cancelMed()" style="display:none;width:auto;padding:12px 16px">Cancel</button>
+      </div>
+    </div>
+    <div id="med-list"></div>
+  </div>
+
+  <!-- PURCHASES -->
+  <div class="pg" id="pg-pur">
+    <div class="card" id="pur-form-card">
+      <div class="ctitle" id="pfc-title">Log purchase</div>
+      <input type="hidden" id="pur-eid"/>
+      <div class="fg">
+        <label class="lbl">Medicine</label>
+        <select id="pur-med" onchange="fillUnit()"></select>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="lbl">Date</label><input type="date" id="pur-date"/></div>
+        <div class="fg" style="flex:0 0 95px"><label class="lbl">Quantity</label>
+          <input type="number" id="pur-qty" placeholder="0" min="0.25" step="0.25" inputmode="decimal"/></div>
+        <div class="fg" style="flex:0 0 100px"><label class="lbl">Unit</label>
+          <input type="text" id="pur-unit" readonly/></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btnp" onclick="savePur()">Save</button>
+        <button class="btn btng btn-sm" id="pur-cancel" onclick="cancelPur()" style="display:none;width:auto;padding:12px 16px">Cancel</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Purchase history</div>
+      <div id="pur-list"></div>
+    </div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="pg" id="pg-bk">
+    <div class="card">
+      <div class="ctitle">Backup &amp; Restore</div>
+      <div class="bk-row">
+        <div class="bk-icon" style="background:var(--greenbg)">📤</div>
+        <div class="bk-body">
+          <strong>Export backup</strong>
+          <p>Save all medicines, purchases, doses and records as a JSON file. Store it in Google Drive, iCloud Drive or any folder.</p>
+          <div id="export-stats" style="font-size:12px;color:var(--tx3);margin-bottom:9px"></div>
+          <button class="btn btnp btn-sm" style="width:auto" onclick="exportData()">Export JSON file</button>
+        </div>
+      </div>
+      <div class="bk-row">
+        <div class="bk-icon" style="background:var(--bluebg)">📥</div>
+        <div class="bk-body">
+          <strong>Import backup</strong>
+          <p>Restore data from a previously exported file. Works on any device — Android or iPhone.</p>
+          <div class="warn-box">⚠️ This will replace all current data on this device.</div>
+          <label style="display:block;background:var(--s2);border:1.5px dashed var(--bd2);border-radius:var(--rs);
+            padding:18px;text-align:center;cursor:pointer;color:var(--tx2);font-size:13px;line-height:1.6">
+            <span style="font-size:22px;display:block;margin-bottom:5px">📂</span>
+            Tap to choose backup file (.json)
+            <input type="file" id="import-file" accept=".json,application/json" style="display:none" onchange="importData(event)"/>
+          </label>
+        </div>
+      </div>
+      <div class="bk-row">
+        <div class="bk-icon" style="background:var(--purplebg)">📱</div>
+        <div class="bk-body">
+          <strong>Switching phones?</strong>
+          <div class="steps">
+            <div class="step">On old phone — tap Export and save the file to Google Drive or iCloud Drive.</div>
+            <div class="step">Install this HTML file on your new phone (open in browser → Add to Home Screen).</div>
+            <div class="step">On new phone — tap Import and pick the file from your cloud drive.</div>
+            <div class="step">All your data is restored instantly.</div>
+          </div>
+          <div class="info-box">💡 The app works identically on Android (Chrome) and iPhone (Safari). Same file, same data format.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <button class="nb on" onclick="goTo('dash')" id="nb-dash">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="nb" onclick="goTo('meds')" id="nb-meds">
+    <svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+    <span>Medicines</span>
+  </button>
+  <button class="nb" onclick="goTo('pur')" id="nb-pur">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    <span>Purchases</span>
+  </button>
+  <button class="nb" onclick="goTo('bk')" id="nb-bk">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span>Backup</span>
+  </button>
+</nav>
+
+<!-- MODAL -->
+<div id="overlay" onclick="overlayClick(event)">
+  <div id="modal">
+    <div class="modal-hdr">
+      <h2 id="modal-ttl">Edit</h2>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════ STATE ════════════════════════
+let S={medicines:[],purchases:[],taken:{},adjustments:[]};
+
+function ld(){
+  try{const r=localStorage.getItem('mtrk3');if(r)S=JSON.parse(r);}catch(e){}
+  ['medicines','purchases','adjustments'].forEach(k=>{if(!S[k])S[k]=[];});
+  if(!S.taken)S.taken={};
+}
+function sv(){try{localStorage.setItem('mtrk3',JSON.stringify(S));}catch(e){}}
+
+// ═══════════════════════ UTILS ════════════════════════
+function fmt12(t){if(!t)return'—';const[hh,mm]=t.split(':');const h=+hh;return(h%12||12)+':'+mm+' '+(h<12?'AM':'PM');}
+function today(){return new Date().toISOString().slice(0,10);}
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
+function t2m(t){const[h,m]=t.split(':');return+h*60+ +m;}
+function nowHHMM(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
+function takenKey(date,mid,time){return`${date}|${mid}|${time}`;}
+
+function toast(msg,c){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.borderColor=c||'var(--bd2)';
+  t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2500);
+}
+
+// ═══════════════════════ CLOCK ════════════════════════
+function tickClock(){
+  const n=new Date();let h=n.getHours(),m=n.getMinutes(),ap=h<12?'AM':'PM';
+  h=h%12||12;
+  document.getElementById('clock').textContent=h+':'+(m<10?'0'+m:m)+' '+ap;
+}
+setInterval(tickClock,10000);tickClock();
+setInterval(()=>{if(document.getElementById('pg-dash').classList.contains('on'))renderDash();},60000);
+
+// ═══════════════════════ NAV ══════════════════════════
+function goTo(pg){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  document.getElementById('nb-'+pg).classList.add('on');
+  document.getElementById('content').scrollTop=0;
+  if(pg==='dash'){renderDash();checkNPCard();}
+  if(pg==='meds')renderMeds();
+  if(pg==='pur'){fillPurSel();renderPurs();}
+  if(pg==='bk')updateExportStats();
+}
+
+// ═══════════════════════ MODAL ════════════════════════
+function openModal(title,html){
+  document.getElementById('modal-ttl').textContent=title;
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('modal').scrollTop=0;
+}
+function closeModal(){document.getElementById('overlay').classList.remove('on');}
+function overlayClick(e){if(e.target===document.getElementById('overlay'))closeModal();}
+
+// ═══════════════════════ DOSE SLOTS ═══════════════════
+let slots=[];
+function addSlot(){slots.push({time:nowHHMM(),qty:1});renderSlots();}
+function removeSlot(i){slots.splice(i,1);renderSlots();}
+function reSlots(){renderSlots();}
+function renderSlots(){
+  const unit=document.getElementById('med-unit').value;
+  const w=document.getElementById('slots-wrap');
+  if(!slots.length){w.innerHTML='';return;}
+  w.innerHTML=slots.map((s,i)=>`
+    <div class="ds">
+      <input type="time" value="${s.time}" oninput="slots[${i}].time=this.value"/>
+      <input type="number" value="${s.qty}" min="0.25" step="0.25" oninput="slots[${i}].qty=parseFloat(this.value)||1"/>
+      <span class="ulbl">${unit}</span>
+      <button class="xbtn" onclick="removeSlot(${i})">×</button>
+    </div>`).join('');
+}
+
+// ═══════════════════════ MEDICINES ════════════════════
+function saveMed(){
+  const eid=document.getElementById('med-eid').value;
+  const name=document.getElementById('med-name').value.trim();
+  const unit=document.getElementById('med-unit').value;
+  if(!name){toast('Enter medicine name','var(--red)');return;}
+  if(!slots.length){toast('Add at least one dose time','var(--red)');return;}
+  const doses=slots.map(s=>({time:s.time,qty:parseFloat(s.qty)||1}));
+  if(eid){
+    const i=S.medicines.findIndex(m=>m.id==eid);
+    if(i>=0)S.medicines[i]={...S.medicines[i],name,unit,doses};
+    toast('Medicine updated ✓','var(--green)');
+  }else{
+    S.medicines.push({id:Date.now(),name,unit,doses});
+    toast('Medicine added ✓','var(--green)');
+  }
+  sv();cancelMed();renderMeds();fillPurSel();
+  if(notifPerm()==='granted')scheduleNotifs();
+}
+
+function cancelMed(){
+  document.getElementById('med-eid').value='';
+  document.getElementById('med-name').value='';
+  document.getElementById('med-unit').value='tab(s)';
+  document.getElementById('mfc-title').textContent='Add medicine';
+  document.getElementById('med-cancel').style.display='none';
+  slots=[];renderSlots();
+}
+
+function editMed(id){
+  const m=S.medicines.find(x=>x.id===id);if(!m)return;
+  document.getElementById('med-eid').value=id;
+  document.getElementById('med-name').value=m.name;
+  document.getElementById('med-unit').value=m.unit;
+  slots=m.doses.map(d=>({time:d.time,qty:d.qty}));
+  document.getElementById('mfc-title').textContent='Edit medicine';
+  document.getElementById('med-cancel').style.display='';
+  renderSlots();
+  document.getElementById('med-form-card').scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>document.getElementById('content').scrollTop=0,100);
+}
+
+function deleteMed(id){
+  if(!confirm('Delete this medicine and all its data?'))return;
+  S.medicines=S.medicines.filter(m=>m.id!==id);
+  S.purchases=S.purchases.filter(p=>p.medId!==id);
+  S.adjustments=S.adjustments.filter(a=>a.medId!==id);
+  const nt={};Object.keys(S.taken).forEach(k=>{if(!k.includes('|'+id+'|'))nt[k]=S.taken[k];});S.taken=nt;
+  sv();renderMeds();fillPurSel();toast('Deleted','var(--red)');
+}
+
+function renderMeds(){
+  const el=document.getElementById('med-list');
+  if(!S.medicines.length){el.innerHTML='<div class="empty">No medicines added yet</div>';return;}
+  el.innerHTML=S.medicines.map(m=>`
+    <div class="med-card">
+      <div class="med-hdr">
+        <div><div class="med-name">${m.name}</div><div class="med-sub">${m.unit}</div></div>
+        <div class="icon-row">
+          <button class="ibtn" onclick="editMed(${m.id})" title="Edit">✏️</button>
+          <button class="ibtn del" onclick="deleteMed(${m.id})" title="Delete">🗑</button>
+        </div>
+      </div>
+      <div class="med-chips">${m.doses.map(d=>`<span class="chip">${fmt12(d.time)} · ${d.qty} ${m.unit}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════ PURCHASES ════════════════════
+function fillPurSel(){
+  const sel=document.getElementById('pur-med');
+  sel.innerHTML=S.medicines.length
+    ?S.medicines.map(m=>`<option value="${m.id}">${m.name}</option>`).join('')
+    :'<option value="">— Add medicines first —</option>';
+  fillUnit();
+}
+function fillUnit(){
+  const id=+document.getElementById('pur-med').value;
+  const m=S.medicines.find(x=>x.id===id);
+  document.getElementById('pur-unit').value=m?m.unit:'—';
+}
+function savePur(){
+  const eid=document.getElementById('pur-eid').value;
+  const medId=+document.getElementById('pur-med').value;
+  const date=document.getElementById('pur-date').value||today();
+  const qty=parseFloat(document.getElementById('pur-qty').value);
+  if(!medId||!S.medicines.find(m=>m.id===medId)){toast('Select a medicine','var(--red)');return;}
+  if(!qty||qty<=0){toast('Enter valid quantity','var(--red)');return;}
+  if(eid){
+    const i=S.purchases.findIndex(p=>p.id==eid);
+    if(i>=0)S.purchases[i]={...S.purchases[i],medId,date,qty};
+    toast('Purchase updated ✓','var(--green)');
+  }else{
+    S.purchases.push({id:Date.now(),medId,date,qty});
+    toast('Purchase logged ✓','var(--green)');
+  }
+  sv();cancelPur();renderPurs();
+}
+function cancelPur(){
+  document.getElementById('pur-eid').value='';
+  document.getElementById('pur-qty').value='';
+  document.getElementById('pur-date').value=today();
+  document.getElementById('pfc-title').textContent='Log purchase';
+  document.getElementById('pur-cancel').style.display='none';
+}
+function editPur(id){
+  const p=S.purchases.find(x=>x.id===id);if(!p)return;
+  fillPurSel();
+  document.getElementById('pur-eid').value=id;
+  document.getElementById('pur-med').value=p.medId;fillUnit();
+  document.getElementById('pur-date').value=p.date;
+  document.getElementById('pur-qty').value=p.qty;
+  document.getElementById('pfc-title').textContent='Edit purchase';
+  document.getElementById('pur-cancel').style.display='';
+  document.getElementById('pur-form-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function deletePur(id){
+  if(!confirm('Delete this purchase?'))return;
+  S.purchases=S.purchases.filter(p=>p.id!==id);
+  sv();renderPurs();toast('Deleted','var(--red)');
+}
+function renderPurs(){
+  const el=document.getElementById('pur-list');
+  if(!S.purchases.length){el.innerHTML='<div class="empty">No purchases logged</div>';return;}
+  [...S.purchases].sort((a,b)=>b.date.localeCompare(a.date)).forEach(()=>{});
+  el.innerHTML=[...S.purchases].sort((a,b)=>b.date.localeCompare(a.date)).map(p=>{
+    const m=S.medicines.find(x=>x.id===p.medId);
+    return`<div class="pi">
+      <div class="pi-ico">🛒</div>
+      <div class="pi-body"><div class="pi-name">${m?m.name:'Unknown'}</div><div class="pi-meta">${p.date}</div></div>
+      <div class="pi-qty">+${p.qty} ${m?m.unit:''}</div>
+      <div class="icon-row" style="margin-left:7px">
+        <button class="ibtn" onclick="editPur(${p.id})">✏️</button>
+        <button class="ibtn del" onclick="deletePur(${p.id})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════ STOCK ════════════════════════
+function calcStock(med){
+  const pur=S.purchases.filter(p=>p.medId===med.id).reduce((s,p)=>s+parseFloat(p.qty),0);
+  const adj=S.adjustments.filter(a=>a.medId===med.id).reduce((s,a)=>s+parseFloat(a.delta),0);
+  let taken=0;
+  Object.keys(S.taken).forEach(k=>{
+    const[,mid,time]=k.split('|');
+    if(+mid===med.id){const d=med.doses.find(x=>x.time===time);if(d)taken+=parseFloat(d.qty);}
+  });
+  return{pur,adj,taken,balance:pur+adj-taken};
+}
+function dailyTotal(med){return med.doses.reduce((s,d)=>s+parseFloat(d.qty),0);}
+function daysLeft(med){const{balance}=calcStock(med);const d=dailyTotal(med);if(d<=0||balance<=0)return 0;return balance/d;}
+
+// ═══════════════════════ TOGGLE TAKEN ═════════════════
+function toggleTaken(medId,time){
+  const k=takenKey(today(),medId,time);
+  if(S.taken[k])delete S.taken[k];else S.taken[k]=true;
+  sv();renderDash();checkBannerClear();
+}
+function checkBannerClear(){
+  const nm=nowMin(),td=today();
+  const any=S.medicines.some(m=>m.doses.some(d=>{
+    const rem=t2m(d.time)+15;
+    return nm>=rem&&!S.taken[takenKey(td,m.id,d.time)];
+  }));
+  if(!any)dimBanner();
+}
+
+// ═══════════════════════ BALANCE CORRECTION ═══════════
+function openBalModal(medId){
+  const m=S.medicines.find(x=>x.id===medId);if(!m)return;
+  const{balance}=calcStock(m);
+  openModal('Correct balance — '+m.name,`
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">
+      Calculated balance: <strong style="color:var(--tx);font-family:'DM Mono'">${Math.max(0,Math.round(balance*100)/100)} ${m.unit}</strong><br>
+      Enter your actual physical count to correct it.
+    </p>
+    <div class="fg"><label class="lbl">Actual balance in hand (${m.unit})</label>
+      <input type="number" id="adj-val" placeholder="Enter real quantity" min="0" step="0.25" inputmode="decimal"/></div>
+    <div class="fg"><label class="lbl">Date</label>
+      <input type="date" id="adj-date" value="${today()}"/></div>
+    <div class="fg"><label class="lbl">Note (optional)</label>
+      <input type="text" id="adj-note" placeholder="e.g. counted stock today" autocomplete="off"/></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btna" onclick="saveAdj(${medId},${balance})">Apply correction</button>
+      <button class="btn btng btn-sm" onclick="closeModal()" style="width:auto;padding:12px 16px">Cancel</button>
+    </div>`);
+}
+function saveAdj(medId,curBal){
+  const val=parseFloat(document.getElementById('adj-val').value);
+  const date=document.getElementById('adj-date').value||today();
+  const note=document.getElementById('adj-note').value.trim();
+  if(isNaN(val)||val<0){toast('Enter valid quantity','var(--red)');return;}
+  S.adjustments.push({id:Date.now(),medId,date,delta:val-curBal,note});
+  sv();closeModal();renderDash();toast('Balance corrected ✓','var(--green)');
+}
+
+// ═══════════════════════ DASHBOARD ════════════════════
+function renderTodayDoses(){
+  const el=document.getElementById('today-list');
+  if(!S.medicines.length){el.innerHTML='<div class="empty">Add medicines to see today\'s schedule</div>';return;}
+  let all=[];
+  S.medicines.forEach(m=>m.doses.forEach(d=>all.push({m,d,key:takenKey(today(),m.id,d.time)})));
+  all.sort((a,b)=>a.d.time.localeCompare(b.d.time));
+  const nm=nowMin();
+  el.innerHTML=all.map(({m,d,key})=>{
+    const taken=!!S.taken[key];
+    const past=t2m(d.time)<=nm;
+    return`<div class="dt ${!taken&&past?'overdue-row':''}">
+      <button class="dck ${taken?'yes':''}" onclick="toggleTaken(${m.id},'${d.time}')" aria-label="Toggle taken">
+        ${taken?`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+      </button>
+      <div class="di">
+        <div class="di-name">${m.name}</div>
+        <div class="di-sub">${fmt12(d.time)}${taken?' · ✓ taken':past?' · overdue':' · upcoming'}</div>
+      </div>
+      <div class="di-qty">${d.qty} ${m.unit}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderStock(){
+  const el=document.getElementById('stock-list');
+  if(!S.medicines.length){el.innerHTML='<div class="empty">No medicines added</div>';return;}
+  el.innerHTML=S.medicines.map(m=>{
+    const{balance}=calcStock(m);
+    const bal=Math.max(0,Math.round(balance*100)/100);
+    const days=daysLeft(m);
+    const isOut=bal<=0,isLow=!isOut&&days<3;
+    const cls=isOut?'out':isLow?'low':'ok';
+    const badge=isOut?'<span class="badge-out">Out of stock</span>':isLow?'<span class="badge-low">Low — &lt;3 days</span>':'';
+    const meta=isOut?'Please replenish':isLow?`~${days.toFixed(1)} days left · replenish soon`:`~${days.toFixed(1)} days remaining · ${dailyTotal(m)} ${m.unit}/day`;
+    return`<div class="sc ${cls}">
+      <div class="sc-top">
+        <div class="sc-name">${m.name}</div>
+        <div class="sc-right">${badge}<button class="sc-edit" onclick="openBalModal(${m.id})">Correct</button></div>
+      </div>
+      <div class="sc-qty ${cls}">${bal} <span style="font-size:14px;font-weight:500;font-family:'DM Sans';color:var(--tx2)">${m.unit}</span></div>
+      <div class="sc-meta">${meta}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDash(){renderTodayDoses();renderStock();}
+
+// ═══════════════════════ NOTIFICATIONS ════════════════
+const REMIND_AFTER=15; // minutes
+let shownToday={};
+
+function notifPerm(){return('Notification' in window)?Notification.permission:'unsupported';}
+
+function checkNPCard(){
+  const wrap=document.getElementById('np-wrap');
+  const stored=localStorage.getItem('mtrk_np');
+  if(notifPerm()==='granted'||notifPerm()==='unsupported'||stored==='no'){
+    wrap.innerHTML='';return;
+  }
+  wrap.innerHTML=`<div class="np-card">
+    <div class="np-inner">
+      <div class="np-icon">🔔</div>
+      <div class="np-body">
+        <strong>Enable dose reminders</strong>
+        <p>Get a notification 15 min after a missed dose, even when the app is in the background.</p>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn btnp btn-sm" style="width:auto" onclick="askNotif()">Allow notifications</button>
+          <button class="btn btng btn-sm" style="width:auto" onclick="skipNotif()">Not now</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function askNotif(){
+  if(!('Notification' in window)){toast('Notifications not supported on this browser','var(--amber)');return;}
+  const r=await Notification.requestPermission();
+  localStorage.setItem('mtrk_np',r==='granted'?'yes':'no');
+  if(r==='granted'){toast('Notifications enabled ✓','var(--green)');scheduleNotifs();}
+  else toast('Using in-app reminders instead','var(--amber)');
+  document.getElementById('np-wrap').innerHTML='';
+}
+function skipNotif(){localStorage.setItem('mtrk_np','no');document.getElementById('np-wrap').innerHTML='';}
+
+function pushNotif(title,body){
+  if(notifPerm()!=='granted')return;
+  try{new Notification(title,{body,tag:'mtrk-dose',renotify:true});}catch(e){}
+}
+
+function scheduleNotifs(){
+  if(notifPerm()!=='granted')return;
+  const now=new Date(),td=today();
+  S.medicines.forEach(m=>{
+    m.doses.forEach(d=>{
+      if(S.taken[takenKey(td,m.id,d.time)])return;
+      const[hh,mm]=d.time.split(':');
+      const fire=new Date(now.getFullYear(),now.getMonth(),now.getDate(),+hh,+mm+REMIND_AFTER,0);
+      const ms=fire-now;
+      if(ms<0)return;
+      const lk='mtrk_notif_'+td+'_'+m.id+'_'+d.time;
+      if(localStorage.getItem(lk))return;
+      setTimeout(()=>{
+        if(!S.taken[takenKey(today(),m.id,d.time)]){
+          pushNotif('💊 Missed dose — '+m.name,`${m.name}: ${d.qty} ${m.unit} was due at ${fmt12(d.time)}`);
+          localStorage.setItem(lk,'1');
+        }
+      },ms);
+    });
+  });
+}
+
+// In-app banner: runs every minute
+let lastReminderDay='';
+function checkInAppReminders(){
+  const td=today();
+  if(lastReminderDay!==td){shownToday={};lastReminderDay=td;scheduleNotifs();}
+  const nm=nowMin();
+  const overdue=[];
+  S.medicines.forEach(m=>{
+    m.doses.forEach(d=>{
+      const remMin=t2m(d.time)+REMIND_AFTER;
+      if(nm<remMin)return;
+      if(S.taken[takenKey(td,m.id,d.time)])return;
+      const k=td+'|'+m.id+'|'+d.time;
+      if(shownToday[k])return;
+      overdue.push({m,d,k});
+    });
+  });
+  if(!overdue.length)return;
+  overdue.forEach(({k,m,d})=>{
+    shownToday[k]=true;
+    // push notif if permitted
+    const lk='mtrk_notif_'+k;
+    if(notifPerm()==='granted'&&!localStorage.getItem(lk)){
+      pushNotif('💊 Missed dose — '+m.name,`${m.name}: ${d.qty} ${m.unit} was due at ${fmt12(d.time)}`);
+      localStorage.setItem(lk,'1');
+    }
+  });
+  // show banner
+  document.getElementById('rb-list').innerHTML=overdue.map(({m,d})=>
+    `<div class="rb-item">${m.name} — ${d.qty} ${m.unit} (due ${fmt12(d.time)})</div>`
+  ).join('');
+  document.getElementById('rbanner').classList.add('on');
+  setTimeout(dimBanner,14000);
+}
+function dimBanner(){document.getElementById('rbanner').classList.remove('on');}
+
+// ═══════════════════════ EXPORT / IMPORT ══════════════
+function updateExportStats(){
+  const el=document.getElementById('export-stats');
+  if(!el)return;
+  el.textContent=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} dose records`;
+}
+
+function exportData(){
+  const payload={
+    version:'mtrk3',
+    exportedAt:new Date().toISOString(),
+    medicines:S.medicines,
+    purchases:S.purchases,
+    taken:S.taken,
+    adjustments:S.adjustments
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='medtracker-backup-'+today()+'.json';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
+  toast('Exported ✓','var(--green)');
+}
+
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.medicines||!data.purchases){toast('Invalid backup file','var(--red)');return;}
+      if(!confirm('Replace all current data with this backup? This cannot be undone.'))return;
+      S.medicines=data.medicines||[];
+      S.purchases=data.purchases||[];
+      S.taken=data.taken||{};
+      S.adjustments=data.adjustments||[];
+      sv();
+      renderDash();
+      updateExportStats();
+      toast('Imported successfully! '+S.medicines.length+' medicines loaded.','var(--green)');
+      e.target.value='';
+    }catch(err){toast('Could not read file — is it a valid backup?','var(--red)');}
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════ PWA MANIFEST ═════════════════
+(function injectManifest(){
+  const manifest={
+    name:'MedTracker',short_name:'MedTracker',
+    start_url:location.pathname,display:'standalone',
+    background_color:'#080e1c',theme_color:'#080e1c',
+    description:'Personal medicine tracker with reminders',
+    icons:[
+      {src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230f172a'/><text y='360' x='256' font-size='320' text-anchor='middle'>&#x1F48A;</text></svg>",
+       sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
+    ]
+  };
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(blob);
+})();
+
+// ═══════════════════════ INSTALL PROMPT ═══════════════
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstall=e;
+  // show a subtle install hint in backup tab
+  const hint=document.createElement('div');
+  hint.className='info-box';
+  hint.style.marginTop='0';
+  hint.innerHTML='📲 <strong>Add to home screen</strong> — tap the banner below or use your browser\'s "Add to Home Screen" option for offline access.';
+  hint.id='install-hint';
+  const bk=document.getElementById('pg-bk');
+  if(bk)bk.querySelector('.card').prepend(hint);
+});
+
+// ═══════════════════════ INIT ═════════════════════════
+ld();
+document.getElementById('pur-date').value=today();
+fillPurSel();
+renderDash();
+checkNPCard();
+// Start reminder polling
+checkInAppReminders();
+setInterval(checkInAppReminders,60000);
+// Schedule push notifications on load
+if(notifPerm()==='granted')scheduleNotifs();
+</script>
+
+<!-- SERVICE WORKER (offline on both Android and iOS) -->
+<script>
+if('serviceWorker' in navigator){
+  const sw=`
+const CACHE='mtrk-v3';
+const URL_TO_CACHE=self.location.pathname.replace('/sw.js','').replace('sw','')+'';
+self.addEventListener('install',e=>{
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE).then(c=>{
+      try{return c.add(self.registration.scope);}catch(err){return;}
+    })
+  );
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  return self.clients.claim();
+});
+self.addEventListener('fetch',e=>{
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+    if(res&&res.status===200&&e.request.method==='GET'){
+      const clone=res.clone();
+      caches.open(CACHE).then(c=>c.put(e.request,clone));
+    }
+    return res;
+  }).catch(()=>caches.match(e.request))));
+});`;
+  const swBlob=new Blob([sw],{type:'application/javascript'});
+  const swURL=URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL,{scope:'./'}).catch(()=>{});
+}
+</script>
+</body>
+</html>
