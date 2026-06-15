@@ -136,6 +136,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .dck svg{width:15px;height:15px;stroke:#080e1c;stroke-width:2.8;fill:none}
 .di{flex:1;min-width:0}
 .di-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.di-sub覆{font-size:11px;color:var(--tx3);margin-top:2px}
 .di-sub{font-size:11px;color:var(--tx3);margin-top:2px}
 .di-qty{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;color:var(--tx2);white-space:nowrap;flex-shrink:0}
 .overdue-row{opacity:.5}
@@ -207,6 +208,22 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
   pointer-events:none;white-space:nowrap;z-index:600;max-width:90vw}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;padding:26px 0;color:var(--tx3);font-size:13px}
+
+/* DYNAMIC CALENDAR STYLES */
+.cal-wrap{margin-bottom:14px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:10px}
+.cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cal-ttl{font-size:13px;font-weight:600;color:var(--tx2)}
+.cal-btn{background:none;border:none;color:var(--tx2);font-size:16px;cursor:pointer;padding:2px 8px;border-radius:4px}
+.cal-btn:active{background:var(--s3)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-wd{font-size:10px;font-weight:600;color:var(--tx3);padding:2px 0}
+.cal-day{font-size:12px;font-weight:500;padding:6px 0;border-radius:6px;cursor:pointer;position:relative;color:var(--tx2)}
+.cal-day.empty-day{id:disabled;cursor:default}
+.cal-day.active-sel{outline:1.5px solid var(--blue);color:var(--tx)}
+/* Status tracking colors requested */
+.cal-day.status-red{background:rgba(248,113,113,.15);color:var(--red);font-weight:600}
+.cal-day.status-orange{background:rgba(251,191,36,.15);color:var(--amber);font-weight:600}
+.cal-day.status-green{background:rgba(74,222,128,.15);color:var(--green);font-weight:600}
 </style>
 </head>
 <body>
@@ -236,6 +253,17 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
     <div id="np-wrap"></div>
     <div class="card">
       <div class="ctitle">Dose History</div>
+      
+      <!-- NEW: Calendar Layout -->
+      <div class="cal-wrap">
+        <div class="cal-hdr">
+          <button class="cal-btn" onclick="moveCalMonth(-1)">‹</button>
+          <div class="cal-ttl" id="cal-month-lbl">Month Year</div>
+          <button class="cal-btn" onclick="moveCalMonth(1)">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid-elements"></div>
+      </div>
+
       <div class="fg">
         <label class="lbl">View / Edit Date</label>
         <input type="date" id="dose-date" onchange="changeDoseDate(this.value)">
@@ -391,6 +419,8 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 <script>
 // ═══════════════════════ STATE ════════════════════════
 let S={medicines:[],purchases:[],taken:{},adjustments:[]};
+// Tracks current visible month view on the dashboard layout
+let calViewDate = new Date();
 
 function ld(){
   try{const r=localStorage.getItem('mtrk3');if(r)S=JSON.parse(r);}catch(e){}
@@ -707,12 +737,82 @@ function renderStock(){
   }).join('');
 }
 
-function changeDoseDate(v){window.selectedDoseDate=v;renderTodayDoses();}
+/* NEW: Integrated Calendar Layout Logic */
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid-elements');
+  const lbl = document.getElementById('cal-month-lbl');
+  if(!grid || !lbl) return;
+
+  const yr = calViewDate.getFullYear();
+  const mo = calViewDate.getMonth();
+  lbl.textContent = calViewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  let html = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(w=>`<div class="cal-wd">${w}</div>`).join('');
+
+  const firstDayIndex = new Date(yr,mo,1).getDay();
+  const totalDays = new Date(yr,mo+1,0).getDate();
+
+  for(let i=0; i<firstDayIndex; i++){
+    html += `<div class="cal-day empty-day"></div>`;
+  }
+
+  const activeSelDate = window.selectedDoseDate || today();
+
+  for(let d=1; d<=totalDays; d++){
+    const curString = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    let statusClass = '';
+
+    if(S.medicines.length > 0) {
+      let totalDoseSlots = 0;
+      let completedDoseSlots = 0;
+
+      S.medicines.forEach(m => {
+        m.doses.forEach(dose => {
+          totalDoseSlots++;
+          if(S.taken[takenKey(curString, m.id, dose.time)]) {
+            completedDoseSlots++;
+          }
+        });
+      });
+
+      if(completedDoseSlots === 0) {
+        statusClass = 'status-red';
+      } else if(completedDoseSlots < totalDoseSlots) {
+        statusClass = 'status-orange';
+      } else {
+        statusClass = 'status-green';
+      }
+    }
+
+    const isSelected = curString === activeSelDate ? 'active-sel' : '';
+    html += `<div class="cal-day ${statusClass} ${isSelected}" onclick="changeDoseDate('${curString}')">${d}</div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function moveCalMonth(dir) {
+  calViewDate.setMonth(calViewDate.getMonth() + dir);
+  renderCalendar();
+}
+
+function changeDoseDate(v){
+  window.selectedDoseDate=v;
+  // Make sure calendar updates its view sync position when selecting a date manually
+  const targetDate = new Date(v);
+  if(!isNaN(targetDate)) {
+    calViewDate.setFullYear(targetDate.getFullYear());
+    calViewDate.setMonth(targetDate.getMonth());
+  }
+  renderTodayDoses();
+  renderCalendar();
+}
+
 function renderDash(){
  if(!window.selectedDoseDate) window.selectedDoseDate=today();
- const dd=document.getElementById('dose-date');
+ const dd = document.getElementById('dose-date');
  if(dd) dd.value=window.selectedDoseDate;
- renderTodayDoses();renderStock();
+ renderTodayDoses();renderStock();renderCalendar();
 }
 
 // ═══════════════════════ NOTIFICATIONS ════════════════
