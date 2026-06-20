@@ -35,7 +35,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:r
   display:flex;align-items:center;justify-content:space-between;gap:8px}
 #hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
 #clock{font-size:12px;font-weight:500;color:var(--tx2);font-family:'DM Mono',monospace;
-  background:var(--s2);padding:5px 10px;border-radius999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
+  background:var(--s2);padding:5px 10px;border-radius:999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
 
 /* CONTENT */
 #content{flex:1;overflow-y:auto;overflow-x:hidden;
@@ -261,7 +261,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         <input type="date" id="dose-date" onchange="changeDoseDate(this.value)">
       </div>
 
-      <!-- Dashboard Layout View Switch Mini Tabs -->
+      <!-- Dashboard Switch Mini Tabs -->
       <div class="dash-tabs">
         <button class="dash-tab on" id="tab-btn-sched" onclick="setDashTab('sched')">Scheduled Doses</button>
         <button class="dash-tab" id="tab-btn-onetime" onclick="setDashTab('onetime')">Log As-Needed Intake</button>
@@ -315,7 +315,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         </div>
       </div>
 
-      <!-- Medicine Type Strategy Config Selection -->
+      <!-- Medicine Nature Configuration Selection -->
       <div class="fg">
         <label class="lbl">Medicine Nature / Usage</label>
         <select id="med-type" onchange="toggleTypeFields(this.value)">
@@ -325,7 +325,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         </select>
       </div>
 
-      <!-- Subform Container Options for Specific Treatment Term limits -->
+      <!-- Options for Specific Period Fields -->
       <div id="type-period-fields" style="display:none;background:var(--s2);padding:12px;border-radius:var(--rs);margin-bottom:10px;border:1px solid var(--bd)">
         <div class="fg">
           <label class="lbl">Start Date</label>
@@ -347,7 +347,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         </div>
       </div>
 
-      <!-- Subform Container Options for One-Time Initial Open Inventory counts -->
+      <!-- Options for One-Time Initial Stock Count -->
       <div id="type-onetime-fields" style="display:none;background:var(--s2);padding:12px;border-radius:var(--rs);margin-bottom:10px;border:1px solid var(--bd)">
         <div class="fg" style="margin-bottom:0">
           <label class="lbl">Opening Stock Inventory Count Balance</label>
@@ -464,20 +464,20 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 
 <div id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ── STATE ──────────────────────────────────────────
 let S={medicines:[],purchases:[],taken:{},adjustments:[],onetimeLogs:[]};
 let calViewDate = new Date();
 let activeDashTab = 'sched'; // 'sched' or 'onetime'
 
-function ld(){
+function loadState(){
   try{const r=localStorage.getItem('mtrk_v4');if(r)S=JSON.parse(r);}catch(e){}
   ['medicines','purchases','adjustments','onetimeLogs'].forEach(k=>{if(!S[k])S[k]=[];});
   if(!S.taken)S.taken={};
-  // Retro compatibility check for type attribute properties
   S.medicines.forEach(m => { if(!m.type) m.type = 'regular'; });
 }
-function sv(){try{localStorage.setItem('mtrk_v4',JSON.stringify(S));}catch(e){}}
+function saveState(){try{localStorage.setItem('mtrk_v4',JSON.stringify(S));}catch(e){}}
 
 // ── UTILS ───────────────────────────────────────────
 function fmt12(t){if(!t)return'—';const[hh,mm]=t.split(':');const h=+hh;return(h%12||12)+':'+mm+' '+(h<12?'AM':'PM');}
@@ -557,7 +557,7 @@ function populateFormSlotSelector(selectedVal) {
   sel.innerHTML = sorted.map((s, idx) => `<option value="${idx}" ${selectedVal==idx?'selected':''}>Dose ${idx+1} (${fmt12(s.time)})</option>`).join('');
 }
 
-// ── STRATEGIC CHRONOLOGICAL DATE TIME CALCULATOR ─────
+// ── STRATEGIC TIMELINE CALCULATOR ───────────────────
 function calculateEndDose() {
   const mType = document.getElementById('med-type').value;
   if(mType !== 'period' || !slots.length) return;
@@ -572,7 +572,6 @@ function calculateEndDose() {
   let currentDay = new Date(startDStr + 'T00:00:00');
   let currentSlotOffset = firstDoseIdx;
   
-  // Advance along timeline counts
   for (let i = 1; i < totalDoses; i++) {
     currentSlotOffset++;
     if(currentSlotOffset >= totalSlotsPerDay) {
@@ -586,7 +585,7 @@ function calculateEndDose() {
   document.getElementById('p-calculated-end').value = `${resultDateStr} at ${fmt12(targetSlotTime)}`;
 }
 
-// ── MEDICINES CRUD CORE ─────────────────────────────
+// ── MEDICINES CRUD ──────────────────────────────────
 function saveMed(){
   const eid=document.getElementById('med-eid').value;
   const name=document.getElementById('med-name').value.trim();
@@ -618,7 +617,6 @@ function saveMed(){
   if(eid){
     const i=S.medicines.findIndex(m=>m.id==eid);
     if(i>=0) {
-      // Retain opening counts if switching configurations natively
       if(type==='onetime' && S.medicines[i].type !== 'onetime') {
         openingStock = parseFloat(document.getElementById('ot-opening-stock').value) || 0;
       } else if (type==='onetime') {
@@ -631,7 +629,7 @@ function saveMed(){
     S.medicines.push({id:Date.now(),name,unit,type,doses,periodConfig,openingStock});
     toast('Medicine added ✓','var(--green)');
   }
-  sv();cancelMed();renderMeds();fillPurSel();
+  saveState();cancelMed();renderMeds();fillPurSel();
 }
 
 function cancelMed(){
@@ -686,7 +684,7 @@ function deleteMed(id){
   S.adjustments=S.adjustments.filter(a=>a.medId!==id);
   S.onetimeLogs=S.onetimeLogs.filter(l=>l.medId!==id);
   const nt={};Object.keys(S.taken).forEach(k=>{if(!k.includes('|'+id+'|'))nt[k]=S.taken[k];});S.taken=nt;
-  sv();renderMeds();fillPurSel();goTo('meds');toast('Deleted','var(--red)');
+  saveState();renderMeds();fillPurSel();goTo('meds');toast('Deleted','var(--red)');
 }
 
 function renderMeds(){
@@ -715,7 +713,7 @@ function renderMeds(){
     </div>`).join('');
 }
 
-// ── INVENTORY STOCK ENGINE ─────────────────────────
+// ── INVENTORY ENGINE ────────────────────────────────
 function calcStock(med){
   const pur=S.purchases.filter(p=>p.medId===med.id).reduce((s,p)=>s+parseFloat(p.qty),0);
   const adj=S.adjustments.filter(a=>a.medId===med.id).reduce((s,a)=>s+parseFloat(a.delta),0);
@@ -739,7 +737,7 @@ function daysLeft(med){
   const{balance}=calcStock(med);const d=dailyTotal(med);if(d<=0||balance<=0)return 0;return balance/d;
 }
 
-// ── PURCHASES HISTORY SECTOR ────────────────────────
+// ── PURCHASES SECTOR ────────────────────────────────
 function fillPurSel(){
   const sel=document.getElementById('pur-med');
   if(!sel) return;
@@ -769,7 +767,7 @@ function savePur(){
     S.purchases.push({id:Date.now(),medId,date,qty});
     toast('Purchase logged ✓','var(--green)');
   }
-  sv();cancelPur();renderPurs();
+  saveState();cancelPur();renderPurs();
 }
 function cancelPur(){
   document.getElementById('pur-eid').value='';
@@ -792,7 +790,7 @@ function editPur(id){
 function deletePur(id){
   if(!confirm('Delete this purchase?'))return;
   S.purchases=S.purchases.filter(p=>p.id!==id);
-  sv();renderPurs();toast('Deleted','var(--red)');
+  saveState();renderPurs();toast('Deleted','var(--red)');
 }
 function renderPurs(){
   const el=document.getElementById('pur-list');
@@ -856,7 +854,7 @@ function logOneTimeIntake() {
   if(!medId) { toast('Select a one-time medicine first','var(--amber)'); return; }
   
   S.onetimeLogs.push({ id: Date.now(), medId, date, time, qty });
-  sv();
+  saveState();
   renderOneTimeHistoryList();
   renderStock();
   toast('Intake log record saved ✓','var(--green)');
@@ -865,7 +863,7 @@ function logOneTimeIntake() {
 function deleteOneTimeLog(id) {
   if(!confirm('Remove this log history record?')) return;
   S.onetimeLogs = S.onetimeLogs.filter(l => l.id !== id);
-  sv();
+  saveState();
   renderOneTimeHistoryList();
   renderStock();
 }
@@ -896,7 +894,7 @@ function renderOneTimeHistoryList() {
   }).join('');
 }
 
-// ── TREATMENT SCHEDULE SPAN TRACKER CHECKER ──────────
+// ── TREATMENT SCHEDULE SPAN CHECKER ──────────────────
 function isPeriodDoseActive(med, doseTime, checkDateStr) {
   if(med.type !== 'period' || !med.periodConfig) return false;
   
@@ -904,13 +902,12 @@ function isPeriodDoseActive(med, doseTime, checkDateStr) {
   const firstDoseIdx = med.periodConfig.firstDoseIndex;
   const totalAllowed = med.periodConfig.totalDosesCount;
   
-  let sortedSlots = [...med.doses]; // already sorted on save
+  let sortedSlots = [...med.doses];
   let totalSlotsPerDay = sortedSlots.length;
   
   let currentDay = new Date(startDStr + 'T00:00:00');
   let currentSlotOffset = firstDoseIdx;
   
-  let matchedCount = 0;
   let activeOnTarget = false;
   
   for (let i = 0; i < totalAllowed; i++) {
@@ -931,7 +928,7 @@ function isPeriodDoseActive(med, doseTime, checkDateStr) {
   return activeOnTarget;
 }
 
-// ── ACCURATE CALENDAR RENDER ENGINE ──────────────────
+// ── CALENDAR RENDER ENGINE ───────────────────────────
 function renderCalendar() {
   const grid = document.getElementById('cal-grid-elements');
   const lbl = document.getElementById('cal-month-lbl');
@@ -953,8 +950,7 @@ function renderCalendar() {
     const curString = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     let statusClass = 'status-none';
 
-    // Filter relevant targeted color tracking rows
-    let trackingMeds = S.medicines.filter(m => m.type === 'regular' || (m.type === 'period'));
+    let trackingMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
     
     if(trackingMeds.length > 0) {
       let totalExpectedDoseSlots = 0;
@@ -1011,7 +1007,7 @@ function changeDoseDate(v){
 function toggleTaken(medId,time){
   const k=takenKey((window.selectedDoseDate||today()),medId,time);
   if(S.taken[k])delete S.taken[k];else S.taken[k]=true;
-  sv();
+  saveState();
   renderDash();
 }
 
@@ -1020,9 +1016,8 @@ function renderTodayDoses(){
   const el=document.getElementById('today-list');
   const viewDate=window.selectedDoseDate||today();
   
-  // Filter active scheduled target lists
   let actionableMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
-  if(!actionableMeds.length){el.innerHTML='<div class="empty">No scheduled medicines active</div>';return;}
+  if(!actionableMeds.length){el.innerHTML='<div class="empty">No scheduled medicines added yet</div>';return;}
   
   let all=[];
   actionableMeds.forEach(m=> {
@@ -1036,7 +1031,7 @@ function renderTodayDoses(){
   });
   
   if(!all.length) {
-    el.innerHTML='<div class="empty">No targeted doses due for this date view</div>';
+    el.innerHTML='<div class="empty">No active doses scheduled for this date</div>';
     return;
   }
   
@@ -1083,7 +1078,7 @@ function saveAdj(medId,curBal){
   const date=document.getElementById('adj-date').value||today();
   if(isNaN(val)||val<0){toast('Enter valid quantity','var(--red)');return;}
   S.adjustments.push({id:Date.now(),medId,date,delta:val-curBal,note:'Correction'});
-  sv();closeModal();renderDash();toast('Balance corrected ✓','var(--green)');
+  saveState();closeModal();renderDash();toast('Balance corrected ✓','var(--green)');
 }
 
 function renderStock(){
@@ -1155,7 +1150,7 @@ function importData(e){
       S.taken=data.taken||{};
       S.adjustments=data.adjustments||[];
       S.onetimeLogs=data.onetimeLogs||[];
-      sv(); renderDash(); updateExportStats();
+      saveState(); renderDash(); updateExportStats();
       toast('Imported successfully!','var(--green)');
     }catch(err){toast('Read error','var(--red)');}
   };
@@ -1163,7 +1158,7 @@ function importData(e){
 }
 
 // ── INITIALIZATION ──────────────────────────────────
-ld();
+loadState();
 document.getElementById('pur-date').value=today();
 document.getElementById('p-start-date').value=today();
 fillPurSel();
