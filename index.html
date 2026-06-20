@@ -10,10 +10,8 @@
 <meta name="theme-color" content="#080e1c"/>
 <link rel="manifest" id="pwa-manifest"/>
 <title>MedTracker</title>
-
 <link rel="icon" type="image/png" href="MedTracker.png">
 <link rel="apple-touch-icon" href="MedTracker.png">
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 :root{
@@ -231,6 +229,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 </head>
 <body>
 
+<!-- HEADER -->
 <div id="hdr">
   <h1>
   <img src="MedTracker.png" alt="MedTracker" class="app-logo">
@@ -239,6 +238,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
   <div id="clock">--:-- --</div>
 </div>
 
+<!-- REMINDER BANNER -->
 <div id="rbanner">
   <div class="rb-ttl">⏰ Missed dose reminder</div>
   <div class="rb-list" id="rb-list"></div>
@@ -249,13 +249,16 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
   <button class="rb-x" onclick="dimBanner()">×</button>
 </div>
 
+<!-- CONTENT -->
 <div id="content">
 
+  <!-- DASHBOARD -->
   <div class="pg on" id="pg-dash">
     <div id="np-wrap"></div>
     <div class="card">
       <div class="ctitle">Dose History</div>
       
+      <!-- Calendar Layout -->
       <div class="cal-wrap">
         <div class="cal-hdr">
           <button class="cal-btn" onclick="moveCalMonth(-1)">‹</button>
@@ -270,15 +273,18 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         <input type="date" id="dose-date" onchange="changeDoseDate(this.value)">
       </div>
 
+      <!-- Dashboard Switch Mini Tabs -->
       <div class="dash-tabs">
         <button class="dash-tab on" id="tab-btn-sched" onclick="setDashTab('sched')">Scheduled Doses</button>
         <button class="dash-tab" id="tab-btn-onetime" onclick="setDashTab('onetime')">Log As-Needed Intake</button>
       </div>
 
+      <!-- Tab View 1: Regular and Specific Schedules -->
       <div id="dash-sched-view">
         <div id="today-list"></div>
       </div>
 
+      <!-- Tab View 2: One-Time/PRN Multi-Intake Logger -->
       <div id="dash-onetime-view" style="display:none">
         <div class="fg" style="margin-bottom:12px">
           <label class="lbl" style="color:var(--blue)">Quick Log One-Time Intake</label>
@@ -301,6 +307,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
     </div>
   </div>
 
+  <!-- MEDICINES -->
   <div class="pg" id="pg-meds">
     <div class="card" id="med-form-card">
       <div class="ctitle" id="mfc-title">Add medicine</div>
@@ -320,6 +327,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         </div>
       </div>
 
+      <!-- Medicine Nature Configuration Selection -->
       <div class="fg">
         <label class="lbl">Medicine Nature / Usage</label>
         <select id="med-type" onchange="toggleTypeFields(this.value)">
@@ -329,6 +337,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         </select>
       </div>
 
+      <!-- Options for Specific Period Fields -->
       <div id="type-period-fields" style="display:none;background:var(--s2);padding:12px;border-radius:var(--rs);margin-bottom:10px;border:1px solid var(--bd)">
         <div class="fg">
           <label class="lbl">Start Date</label>
@@ -350,6 +359,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         </div>
       </div>
 
+      <!-- Options for One-Time Initial Stock Count -->
       <div id="type-onetime-fields" style="display:none;background:var(--s2);padding:12px;border-radius:var(--rs);margin-bottom:10px;border:1px solid var(--bd)">
         <div class="fg" style="margin-bottom:0">
           <label class="lbl">Opening Stock Inventory Count Balance</label>
@@ -374,6 +384,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
     <div id="med-list"></div>
   </div>
 
+  <!-- PURCHASES -->
   <div class="pg" id="pg-pur">
     <div class="card" id="pur-form-card">
       <div class="ctitle" id="pfc-title">Log purchase</div>
@@ -400,6 +411,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
     </div>
   </div>
 
+  <!-- BACKUP -->
   <div class="pg" id="pg-bk">
     <div class="card">
       <div class="ctitle">Backup &amp; Restore</div>
@@ -431,6 +443,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 
 </div>
 
+<!-- NAV -->
 <nav id="nav">
   <button class="nb on" onclick="goTo('dash')" id="nb-dash">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -450,6 +463,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
   </button>
 </nav>
 
+<!-- MODAL -->
 <div id="overlay" onclick="overlayClick(event)">
   <div id="modal">
     <div class="modal-hdr">
@@ -1154,24 +1168,6 @@ function importData(e){
   };
   reader.readAsText(file);
 }
-
-// ── PWA AUTOMATED INLINE EMBEDDED MANIFEST GENERATOR ──
-(function injectManifest(){
-  const manifest={
-    name:'MedTracker',short_name:'MedTracker',
-    start_url:location.pathname,display:'standalone',
-    background_color:'#080e1c',theme_color:'#080e1c',
-    description:'Personal medicine tracker with reminders',
-    icons:[
-      {
-        src:"MedTracker.png",
-        sizes:'512x512',type:'image/png',purpose:'any maskable'
-      }
-    ]
-  };
-  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-  document.getElementById('pwa-manifest').href=URL.createObjectURL(blob);
-})();
 
 // ── INITIALIZATION ──────────────────────────────────
 loadState();
