@@ -9,6 +9,8 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#080e1c"/>
 <link rel="manifest" id="pwa-manifest"/>
+<link rel="icon" type="image/png" href="MedTracker.png">
+<link rel="apple-touch-icon" href="MedTracker.png">
 <title>MedTracker</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
@@ -34,6 +36,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:r
   padding:calc(var(--st)+10px) 16px 10px;background:var(--bg);border-bottom:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;gap:8px}
 #hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.app-logo{width:28px;height:28px;border-radius:8px;object-fit:cover;flex-shrink:0}
 #clock{font-size:12px;font-weight:500;color:var(--tx2);font-family:'DM Mono',monospace;
   background:var(--s2);padding:5px 10px;border-radius:999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
 
@@ -222,7 +225,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 
 <!-- HEADER -->
 <div id="hdr">
-  <h1><span>💊</span>MedTracker</h1>
+  <h1><img src="MedTracker.png" alt="MedTracker" class="app-logo">MedTracker</h1>
   <div id="clock">--:-- --</div>
 </div>
 
