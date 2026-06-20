@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#080e1c"/>
 
-<!-- EMBEDDED HOMESCREEN APP ICONS (Fixes the generic letter "M" issue) -->
+<!-- EMBEDDED HOMESCREEN APP ICONS -->
 <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080e1c'/><rect width='150' height='150' x='15' y='15' rx='32' fill='%23101624' stroke='%231e2f47' stroke-width='2'/><path d='M90 50v80M50 90h80' stroke='%233b82f6' stroke-width='24' stroke-linecap='round'/></svg>"/>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080e1c'/><rect width='150' height='150' x='15' y='15' rx='32' fill='%23101624' stroke='%231e2f47' stroke-width='2'/><path d='M90 50v80M50 90h80' stroke='%233b82f6' stroke-width='24' stroke-linecap='round'/></svg>"/>
 
@@ -87,7 +87,7 @@ input[type=time],input[type=date]{font-size:14px;color-scheme:dark}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b9cc0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 11px center;padding-right:34px}
 input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
-.frow{display:flex;gap:8px}
+.frow(display:flex;gap:8px)
 .frow>.fg{flex:1;margin-bottom:0}
 
 /* BUTTONS */
@@ -666,9 +666,9 @@ function editMed(id){
   document.getElementById('med-eid').value=id;
   document.getElementById('med-name').value=m.name;
   document.getElementById('med-unit').value=m.unit;
-  document.getElementById('med-type').value=m.type;
+  document.getElementById('med-type').value=m.type || 'regular';
   
-  toggleTypeFields(m.type);
+  toggleTypeFields(document.getElementById('med-type').value);
   
   if (m.type !== 'onetime') {
     slots = m.doses.map(d=>({time:d.time,qty:d.qty}));
@@ -710,8 +710,8 @@ function renderMeds(){
         <div>
           <div class="med-name">${m.name}</div>
           <div style="margin-top:2px; display:flex; gap:6px; align-items:center;">
-            <span class="chip ${m.type==='regular'?'':m.type==='period'?'purple':'amber'}" style="padding:1px 6px; font-size:10px">
-              ${m.type==='regular'?'Regular':m.type==='period'?'Specific Period':'One-time Take'}
+            <span class="chip ${(!m.type || m.type==='regular')?'':m.type==='period'?'purple':'amber'}" style="padding:1px 6px; font-size:10px">
+              ${(!m.type || m.type==='regular')?'Regular':m.type==='period'?'Specific Period':'One-time Take'}
             </span>
             <span class="med-sub">${m.unit}</span>
           </div>
@@ -853,8 +853,11 @@ function populateOneTimeDropdown() {
   updateOtUnit();
 }
 
+// Fallback protection handler logic
 function updateOtUnit() {
-  const mid = +document.getElementById('ot-med-sel').value;
+  const selectEl = document.getElementById('ot-med-sel');
+  if (!selectEl || !selectEl.value) return;
+  const mid = +selectEl.value;
   const m = S.medicines.find(x=>x.id===mid);
   document.getElementById('ot-time-input').value = nowHHMM();
 }
@@ -964,7 +967,7 @@ function renderCalendar() {
     const curString = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     let statusClass = 'status-none';
 
-    let trackingMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
+    let trackingMeds = S.medicines.filter(m => !m.type || m.type === 'regular' || m.type === 'period');
     
     if(trackingMeds.length > 0) {
       let totalExpectedDoseSlots = 0;
@@ -972,7 +975,7 @@ function renderCalendar() {
 
       trackingMeds.forEach(m => {
         m.doses.forEach(dose => {
-          if(m.type === 'regular') {
+          if(!m.type || m.type === 'regular') {
             totalExpectedDoseSlots++;
             if(S.taken[takenKey(curString, m.id, dose.time)]) completedDoseSlots++;
           } else if(m.type === 'period' && isPeriodDoseActive(m, dose.time, curString)) {
@@ -1030,18 +1033,21 @@ function renderTodayDoses(){
   const el=document.getElementById('today-list');
   const viewDate=window.selectedDoseDate||today();
   
-  let actionableMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
+  // Protect backward compatibility: match regular entries or those explicitly missing layout tags
+  let actionableMeds = S.medicines.filter(m => !m.type || m.type === 'regular' || m.type === 'period');
   if(!actionableMeds.length){el.innerHTML='<div class="empty">No scheduled medicines added yet</div>';return;}
   
   let all=[];
   actionableMeds.forEach(m=> {
-    m.doses.forEach(d=> {
-      if(m.type === 'regular') {
-        all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
-      } else if(m.type === 'period' && isPeriodDoseActive(m, d.time, viewDate)) {
-        all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
-      }
-    });
+    if (m.doses) {
+      m.doses.forEach(d=> {
+        if(!m.type || m.type === 'regular') {
+          all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
+        } else if(m.type === 'period' && isPeriodDoseActive(m, d.time, viewDate)) {
+          all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
+        }
+      });
+    }
   });
   
   if(!all.length) {
@@ -1140,7 +1146,7 @@ function renderDash(){
 function updateExportStats(){
   const el=document.getElementById('export-stats');
   if(!el)return;
-  el.textContent=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} logs`;
+  el.textContent seaword=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} logs`;
 }
 function exportData(){
   const payload={ version:'mtrk_v4', exportedAt:new Date().toISOString(), ...S };
