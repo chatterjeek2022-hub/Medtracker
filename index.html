@@ -29,11 +29,15 @@
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,-apple-system,sans-serif;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
 
-/* HEADER */
+/* HEADER WITH PREMIUM SVG ICON */
 #hdr{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;
   padding:calc(var(--st)+10px) 16px 10px;background:var(--bg);border-bottom:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;gap:8px}
-#hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
+#hdr h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:10px;white-space:nowrap;letter-spacing:-0.3px}
+.hdr-icon{width:28px;height:28px;background:linear-gradient(135deg, #1e40af, #3b82f6);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(96,165,250,0.25);border:1px solid rgba(255,255,255,0.1)}
+.hdr-icon svg{width:16px;height:16px;fill:none;stroke:#ffffff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 #clock{font-size:12px;font-weight:500;color:var(--tx2);font-family:'DM Mono',monospace;
   background:var(--s2);padding:5px 10px;border-radius:999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
 
@@ -220,9 +224,14 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- HEADER WITH EXPLICIT SVGS SHIELD ACCENT BOX -->
 <div id="hdr">
-  <h1><span>💊</span>MedTracker</h1>
+  <h1>
+    <div class="hdr-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 8v8M9 12h6"/></svg>
+    </div>
+    MedTracker
+  </h1>
   <div id="clock">--:-- --</div>
 </div>
 
@@ -281,7 +290,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
             <input type="number" id="ot-qty-input" value="1" min="0.25" step="0.25" style="width:75px"/>
             <input type="time" id="ot-time-input" style="width:105px"/>
           </div>
-          <button class="btn btnp btn-sm" style="width:100%;margin-top:8px" onclick="logOneTimeIntake()">Save Record</button>
+          <button class="btn btnp" style="width:100%;margin-top:8px" onclick="logOneTimeIntake()">Save Record</button>
         </div>
         <div class="divider" style="height:1px;background:var(--bd);margin:12px 0"></div>
         <div class="ctitle" style="font-size:10px;color:var(--tx2)">Intake Logs Recorded Today</div>
