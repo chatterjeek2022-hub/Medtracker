@@ -35,7 +35,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:r
   display:flex;align-items:center;justify-content:space-between;gap:8px}
 #hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
 #clock{font-size:12px;font-weight:500;color:var(--tx2);font-family:'DM Mono',monospace;
-  background:var(--s2);padding:5px 10px;border-radius:999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
+  background:var(--s2);padding:5px 10px;border-radius999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
 
 /* CONTENT */
 #content{flex:1;overflow-y:auto;overflow-x:hidden;
@@ -60,6 +60,11 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:r
 /* CARDS */
 .card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:11px}
 .ctitle{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:11px}
+
+/* DASHBOARD MINI TABS */
+.dash-tabs{display:flex;background:var(--s2);border-radius:var(--rs);padding:3px;margin-bottom:12px;gap:4px}
+.dash-tab{flex:1;padding:8px;font-size:13px;font-weight:600;text-align:center;color:var(--tx2);background:none;border:none;cursor:pointer;border-radius:6px;transition:all .15s}
+.dash-tab.on{background:var(--s3);color:var(--tx)}
 
 /* FORMS */
 .fg{margin-bottom:9px}
@@ -107,6 +112,8 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .med-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .chip{background:var(--bluebg);border:1px solid rgba(96,165,250,.2);border-radius:999px;
   font-size:11px;font-weight:500;color:var(--blue);padding:3px 10px;white-space:nowrap}
+.chip.purple{background:var(--purplebg);border-color:rgba(167,139,250,.2);color:var(--purple)}
+.chip.amber{background:var(--amberbg);border-color:rgba(251,191,36,.2);color:var(--amber)}
 .icon-row{display:flex;gap:4px;flex-shrink:0}
 .ibtn{background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;color:var(--tx3);font-size:16px;transition:color .15s;line-height:1}
 .ibtn:active{color:var(--blue)}
@@ -136,7 +143,6 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .dck svg{width:15px;height:15px;stroke:#080e1c;stroke-width:2.8;fill:none}
 .di{flex:1;min-width:0}
 .di-name{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.di-sub覆{font-size:11px;color:var(--tx3);margin-top:2px}
 .di-sub{font-size:11px;color:var(--tx3);margin-top:2px}
 .di-qty{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;color:var(--tx2);white-space:nowrap;flex-shrink:0}
 .overdue-row{opacity:.5}
@@ -187,20 +193,6 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .np-body strong{font-size:14px;font-weight:600;color:var(--tx)}
 .np-body p{font-size:13px;color:var(--tx2);margin-top:3px;line-height:1.55}
 
-/* BACKUP TAB */
-.bk-row{display:flex;align-items:flex-start;gap:13px;padding:14px 0;border-bottom:1px solid var(--bd)}
-.bk-row:last-child{border-bottom:none}
-.bk-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.bk-body{flex:1}
-.bk-body strong{font-size:14px;font-weight:600;display:block;margin-bottom:3px}
-.bk-body p{font-size:12px;color:var(--tx2);line-height:1.55;margin-bottom:9px}
-.warn-box{background:var(--redbg);border:1px solid rgba(248,113,113,.2);border-radius:var(--rs);padding:9px 12px;font-size:12px;color:var(--red);margin-bottom:10px;line-height:1.5}
-.info-box{background:var(--bluebg);border:1px solid rgba(96,165,250,.2);border-radius:var(--rs);padding:9px 12px;font-size:12px;color:var(--blue);margin-bottom:10px;line-height:1.5}
-.steps{counter-reset:step;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-.step{counter-increment:step;display:flex;gap:8px;font-size:13px;color:var(--tx2);line-height:1.5}
-.step::before{content:counter(step);background:var(--s3);color:var(--tx2);font-size:11px;font-weight:600;
-  width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-
 /* TOAST */
 #toast{position:fixed;bottom:calc(74px + var(--sb));left:50%;transform:translateX(-50%) translateY(10px);
   background:var(--s2);border:1px solid var(--bd2);border-radius:var(--rs);
@@ -220,10 +212,10 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .cal-day{font-size:12px;font-weight:500;padding:6px 0;border-radius:6px;cursor:pointer;position:relative;color:var(--tx2)}
 .cal-day.empty-day{id:disabled;cursor:default}
 .cal-day.active-sel{outline:1.5px solid var(--blue);color:var(--tx)}
-/* Status tracking colors requested */
 .cal-day.status-red{background:rgba(248,113,113,.15);color:var(--red);font-weight:600}
 .cal-day.status-orange{background:rgba(251,191,36,.15);color:var(--amber);font-weight:600}
 .cal-day.status-green{background:rgba(74,222,128,.15);color:var(--green);font-weight:600}
+.cal-day.status-none{background:transparent;color:var(--tx2)}
 </style>
 </head>
 <body>
@@ -254,7 +246,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
     <div class="card">
       <div class="ctitle">Dose History</div>
       
-      <!-- NEW: Calendar Layout -->
+      <!-- Calendar Layout -->
       <div class="cal-wrap">
         <div class="cal-hdr">
           <button class="cal-btn" onclick="moveCalMonth(-1)">‹</button>
@@ -268,7 +260,34 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
         <label class="lbl">View / Edit Date</label>
         <input type="date" id="dose-date" onchange="changeDoseDate(this.value)">
       </div>
-      <div id="today-list"></div>
+
+      <!-- Dashboard Layout View Switch Mini Tabs -->
+      <div class="dash-tabs">
+        <button class="dash-tab on" id="tab-btn-sched" onclick="setDashTab('sched')">Scheduled Doses</button>
+        <button class="dash-tab" id="tab-btn-onetime" onclick="setDashTab('onetime')">Log As-Needed Intake</button>
+      </div>
+
+      <!-- Tab View 1: Regular and Specific Schedules -->
+      <div id="dash-sched-view">
+        <div id="today-list"></div>
+      </div>
+
+      <!-- Tab View 2: One-Time/PRN Multi-Intake Logger -->
+      <div id="dash-onetime-view" style="display:none">
+        <div class="fg" style="margin-bottom:12px">
+          <label class="lbl" style="color:var(--blue)">Quick Log One-Time Intake</label>
+          <div style="display:flex;gap:6px">
+            <select id="ot-med-sel" style="flex:2" onchange="updateOtUnit()"></select>
+            <input type="number" id="ot-qty-input" value="1" min="0.25" step="0.25" style="width:75px"/>
+            <input type="time" id="ot-time-input" style="width:105px"/>
+          </div>
+          <button class="btn btnp btn-sm" style="width:100%;margin-top:8px" onclick="logOneTimeIntake()">Save Record</button>
+        </div>
+        <div class="divider" style="height:1px;background:var(--bd);margin:12px 0"></div>
+        <div class="ctitle" style="font-size:10px;color:var(--tx2)">Intake Logs Recorded Today</div>
+        <div id="onetime-history-list"></div>
+      </div>
+
     </div>
     <div class="card">
       <div class="ctitle">Stock overview</div>
@@ -295,7 +314,48 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
           </select>
         </div>
       </div>
+
+      <!-- Medicine Type Strategy Config Selection -->
       <div class="fg">
+        <label class="lbl">Medicine Nature / Usage</label>
+        <select id="med-type" onchange="toggleTypeFields(this.value)">
+          <option value="regular">Regular Medicine (Ongoing Daily Tracking)</option>
+          <option value="period">Specific Period (To be consumed for few days)</option>
+          <option value="onetime">One-Time Medicine (Painkillers, antacids - As-Needed)</option>
+        </select>
+      </div>
+
+      <!-- Subform Container Options for Specific Treatment Term limits -->
+      <div id="type-period-fields" style="display:none;background:var(--s2);padding:12px;border-radius:var(--rs);margin-bottom:10px;border:1px solid var(--bd)">
+        <div class="fg">
+          <label class="lbl">Start Date</label>
+          <input type="date" id="p-start-date" onchange="calculateEndDose()"/>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label class="lbl">First Dose Allocation</label>
+            <select id="p-start-slot" onchange="calculateEndDose()"></select>
+          </div>
+          <div class="fg">
+            <label class="lbl">Total Doses Count</label>
+            <input type="number" id="p-total-doses" value="10" min="1" oninput="calculateEndDose()"/>
+          </div>
+        </div>
+        <div class="fg" style="margin-top:8px;margin-bottom:0">
+          <label class="lbl" style="color:var(--blue)">Calculated Term Terminus</label>
+          <input type="text" id="p-calculated-end" readonly placeholder="End date calculation display" style="font-size:13px"/>
+        </div>
+      </div>
+
+      <!-- Subform Container Options for One-Time Initial Open Inventory counts -->
+      <div id="type-onetime-fields" style="display:none;background:var(--s2);padding:12px;border-radius:var(--rs);margin-bottom:10px;border:1px solid var(--bd)">
+        <div class="fg" style="margin-bottom:0">
+          <label class="lbl">Opening Stock Inventory Count Balance</label>
+          <input type="number" id="ot-opening-stock" value="0" min="0" step="0.25" placeholder="Total units currently in stock"/>
+        </div>
+      </div>
+
+      <div class="fg" id="form-schedule-section">
         <label class="lbl">Dose schedule <span style="font-weight:400;color:var(--tx3)">(time + qty per dose)</span></label>
         <div id="slots-wrap"></div>
         <button class="add-slot" onclick="addSlot()">
@@ -303,6 +363,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
           Add dose time
         </button>
       </div>
+      
       <div style="display:flex;gap:8px">
         <button class="btn btnp" onclick="saveMed()">Save Medicine</button>
         <button class="btn btng btn-sm" id="med-cancel" onclick="cancelMed()" style="display:none;width:auto;padding:12px 16px">Cancel</button>
@@ -365,19 +426,6 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
           </label>
         </div>
       </div>
-      <div class="bk-row">
-        <div class="bk-icon" style="background:var(--purplebg)">📱</div>
-        <div class="bk-body">
-          <strong>Switching phones?</strong>
-          <div class="steps">
-            <div class="step">On old phone — tap Export and save the file to Google Drive or iCloud Drive.</div>
-            <div class="step">Install this HTML file on your new phone (open in browser → Add to Home Screen).</div>
-            <div class="step">On new phone — tap Import and pick the file from your cloud drive.</div>
-            <div class="step">All your data is restored instantly.</div>
-          </div>
-          <div class="info-box">💡 The app works identically on Android (Chrome) and iPhone (Safari). Same file, same data format.</div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -417,19 +465,21 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════ STATE ════════════════════════
-let S={medicines:[],purchases:[],taken:{},adjustments:[]};
-// Tracks current visible month view on the dashboard layout
+// ── STATE ──────────────────────────────────────────
+let S={medicines:[],purchases:[],taken:{},adjustments:[],onetimeLogs:[]};
 let calViewDate = new Date();
+let activeDashTab = 'sched'; // 'sched' or 'onetime'
 
 function ld(){
-  try{const r=localStorage.getItem('mtrk3');if(r)S=JSON.parse(r);}catch(e){}
-  ['medicines','purchases','adjustments'].forEach(k=>{if(!S[k])S[k]=[];});
+  try{const r=localStorage.getItem('mtrk_v4');if(r)S=JSON.parse(r);}catch(e){}
+  ['medicines','purchases','adjustments','onetimeLogs'].forEach(k=>{if(!S[k])S[k]=[];});
   if(!S.taken)S.taken={};
+  // Retro compatibility check for type attribute properties
+  S.medicines.forEach(m => { if(!m.type) m.type = 'regular'; });
 }
-function sv(){try{localStorage.setItem('mtrk3',JSON.stringify(S));}catch(e){}}
+function sv(){try{localStorage.setItem('mtrk_v4',JSON.stringify(S));}catch(e){}}
 
-// ═══════════════════════ UTILS ════════════════════════
+// ── UTILS ───────────────────────────────────────────
 function fmt12(t){if(!t)return'—';const[hh,mm]=t.split(':');const h=+hh;return(h%12||12)+':'+mm+' '+(h<12?'AM':'PM');}
 function today(){return new Date().toISOString().slice(0,10);}
 function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
@@ -443,42 +493,40 @@ function toast(msg,c){
   t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2500);
 }
 
-// ═══════════════════════ CLOCK ════════════════════════
+// ── CLOCK ───────────────────────────────────────────
 function tickClock(){
   const n=new Date();let h=n.getHours(),m=n.getMinutes(),ap=h<12?'AM':'PM';
   h=h%12||12;
   document.getElementById('clock').textContent=h+':'+(m<10?'0'+m:m)+' '+ap;
 }
 setInterval(tickClock,10000);tickClock();
-setInterval(()=>{if(document.getElementById('pg-dash').classList.contains('on'))renderDash();},60000);
 
-// ═══════════════════════ NAV ══════════════════════════
+// ── NAVIGATION ──────────────────────────────────────
 function goTo(pg){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   document.getElementById('pg-'+pg).classList.add('on');
   document.getElementById('nb-'+pg).classList.add('on');
   document.getElementById('content').scrollTop=0;
-  if(pg==='dash'){renderDash();checkNPCard();}
-  if(pg==='meds')renderMeds();
+  if(pg==='dash') renderDash();
+  if(pg==='meds') renderMeds();
   if(pg==='pur'){fillPurSel();renderPurs();}
-  if(pg==='bk')updateExportStats();
+  if(pg==='bk') updateExportStats();
 }
 
-// ═══════════════════════ MODAL ════════════════════════
+// ── MODAL ────────────────────────────────────────────
 function openModal(title,html){
   document.getElementById('modal-ttl').textContent=title;
   document.getElementById('modal-body').innerHTML=html;
   document.getElementById('overlay').classList.add('on');
-  document.getElementById('modal').scrollTop=0;
 }
 function closeModal(){document.getElementById('overlay').classList.remove('on');}
 function overlayClick(e){if(e.target===document.getElementById('overlay'))closeModal();}
 
-// ═══════════════════════ DOSE SLOTS ═══════════════════
+// ── DOSE SLOTS MANAGEMENT ───────────────────────────
 let slots=[];
-function addSlot(){slots.push({time:nowHHMM(),qty:1});renderSlots();}
-function removeSlot(i){slots.splice(i,1);renderSlots();}
+function addSlot(){slots.push({time:nowHHMM(),qty:1});renderSlots();if(document.getElementById('med-type').value==='period')calculateEndDose();}
+function removeSlot(i){slots.splice(i,1);renderSlots();if(document.getElementById('med-type').value==='period')calculateEndDose();}
 function reSlots(){renderSlots();}
 function renderSlots(){
   const unit=document.getElementById('med-unit').value;
@@ -486,40 +534,119 @@ function renderSlots(){
   if(!slots.length){w.innerHTML='';return;}
   w.innerHTML=slots.map((s,i)=>`
     <div class="ds">
-      <input type="time" value="${s.time}" oninput="slots[${i}].time=this.value"/>
-      <input type="number" value="${s.qty}" min="0.25" step="0.25" oninput="slots[${i}].qty=parseFloat(this.value)||1"/>
+      <input type="time" value="${s.time}" oninput="slots[${i}].time=this.value; calculateEndDose()"/>
+      <input type="number" value="${s.qty}" min="0.25" step="0.25" oninput="slots[${i}].qty=parseFloat(this.value)||1; calculateEndDose()"/>
       <span class="ulbl">${unit}</span>
       <button class="xbtn" onclick="removeSlot(${i})">×</button>
     </div>`).join('');
+  populateFormSlotSelector();
 }
 
-// ═══════════════════════ MEDICINES ════════════════════
+function toggleTypeFields(val) {
+  document.getElementById('type-period-fields').style.display = (val === 'period') ? 'block' : 'none';
+  document.getElementById('type-onetime-fields').style.display = (val === 'onetime') ? 'block' : 'none';
+  document.getElementById('form-schedule-section').style.display = (val === 'onetime') ? 'none' : 'block';
+  if(val==='period') calculateEndDose();
+}
+
+function populateFormSlotSelector(selectedVal) {
+  const sel = document.getElementById('p-start-slot');
+  if(!sel) return;
+  if(!slots.length) { sel.innerHTML = '<option value="0">Add a schedule slot first</option>'; return; }
+  let sorted = [...slots].sort((a,b)=>a.time.localeCompare(b.time));
+  sel.innerHTML = sorted.map((s, idx) => `<option value="${idx}" ${selectedVal==idx?'selected':''}>Dose ${idx+1} (${fmt12(s.time)})</option>`).join('');
+}
+
+// ── STRATEGIC CHRONOLOGICAL DATE TIME CALCULATOR ─────
+function calculateEndDose() {
+  const mType = document.getElementById('med-type').value;
+  if(mType !== 'period' || !slots.length) return;
+  
+  const startDStr = document.getElementById('p-start-date').value || today();
+  const firstDoseIdx = parseInt(document.getElementById('p-start-slot').value) || 0;
+  const totalDoses = parseInt(document.getElementById('p-total-doses').value) || 1;
+
+  let sortedSlots = [...slots].sort((a,b)=>a.time.localeCompare(b.time));
+  let totalSlotsPerDay = sortedSlots.length;
+  
+  let currentDay = new Date(startDStr + 'T00:00:00');
+  let currentSlotOffset = firstDoseIdx;
+  
+  // Advance along timeline counts
+  for (let i = 1; i < totalDoses; i++) {
+    currentSlotOffset++;
+    if(currentSlotOffset >= totalSlotsPerDay) {
+      currentSlotOffset = 0;
+      currentDay.setDate(currentDay.getDate() + 1);
+    }
+  }
+
+  const resultDateStr = currentDay.toISOString().slice(0,10);
+  const targetSlotTime = sortedSlots[currentSlotOffset]?.time || '00:00';
+  document.getElementById('p-calculated-end').value = `${resultDateStr} at ${fmt12(targetSlotTime)}`;
+}
+
+// ── MEDICINES CRUD CORE ─────────────────────────────
 function saveMed(){
   const eid=document.getElementById('med-eid').value;
   const name=document.getElementById('med-name').value.trim();
   const unit=document.getElementById('med-unit').value;
+  const type=document.getElementById('med-type').value;
+  
   if(!name){toast('Enter medicine name','var(--red)');return;}
-  if(!slots.length){toast('Add at least one dose time','var(--red)');return;}
-  const doses=slots.map(s=>({time:s.time,qty:parseFloat(s.qty)||1}));
+  
+  let doses = [];
+  let periodConfig = null;
+  let openingStock = 0;
+
+  if (type !== 'onetime') {
+    if(!slots.length){toast('Add at least one dose time','var(--red)');return;}
+    doses = [...slots].sort((a,b)=>a.time.localeCompare(b.time)).map(s=>({time:s.time,qty:parseFloat(s.qty)||1}));
+  }
+
+  if (type === 'period') {
+    const startDate = document.getElementById('p-start-date').value || today();
+    const firstDoseIndex = parseInt(document.getElementById('p-start-slot').value) || 0;
+    const totalDosesCount = parseInt(document.getElementById('p-total-doses').value) || 1;
+    periodConfig = { startDate, firstDoseIndex, totalDosesCount };
+  }
+
+  if (type === 'onetime') {
+    openingStock = parseFloat(document.getElementById('ot-opening-stock').value) || 0;
+  }
+
   if(eid){
     const i=S.medicines.findIndex(m=>m.id==eid);
-    if(i>=0)S.medicines[i]={...S.medicines[i],name,unit,doses};
+    if(i>=0) {
+      // Retain opening counts if switching configurations natively
+      if(type==='onetime' && S.medicines[i].type !== 'onetime') {
+        openingStock = parseFloat(document.getElementById('ot-opening-stock').value) || 0;
+      } else if (type==='onetime') {
+        openingStock = S.medicines[i].openingStock || 0;
+      }
+      S.medicines[i]={...S.medicines[i],name,unit,type,doses,periodConfig,openingStock};
+    }
     toast('Medicine updated ✓','var(--green)');
   }else{
-    S.medicines.push({id:Date.now(),name,unit,doses});
+    S.medicines.push({id:Date.now(),name,unit,type,doses,periodConfig,openingStock});
     toast('Medicine added ✓','var(--green)');
   }
   sv();cancelMed();renderMeds();fillPurSel();
-  if(notifPerm()==='granted')scheduleNotifs();
 }
 
 function cancelMed(){
   document.getElementById('med-eid').value='';
   document.getElementById('med-name').value='';
   document.getElementById('med-unit').value='tab(s)';
+  document.getElementById('med-type').value='regular';
+  document.getElementById('p-start-date').value=today();
+  document.getElementById('p-total-doses').value='10';
+  document.getElementById('ot-opening-stock').value='0';
   document.getElementById('mfc-title').textContent='Add medicine';
   document.getElementById('med-cancel').style.display='none';
-  slots=[];renderSlots();
+  slots=[];
+  toggleTypeFields('regular');
+  renderSlots();
 }
 
 function editMed(id){
@@ -527,12 +654,29 @@ function editMed(id){
   document.getElementById('med-eid').value=id;
   document.getElementById('med-name').value=m.name;
   document.getElementById('med-unit').value=m.unit;
-  slots=m.doses.map(d=>({time:d.time,qty:d.qty}));
+  document.getElementById('med-type').value=m.type;
+  
+  toggleTypeFields(m.type);
+  
+  if (m.type !== 'onetime') {
+    slots = m.doses.map(d=>({time:d.time,qty:d.qty}));
+    renderSlots();
+  }
+  
+  if (m.type === 'period' && m.periodConfig) {
+    document.getElementById('p-start-date').value = m.periodConfig.startDate;
+    document.getElementById('p-total-doses').value = m.periodConfig.totalDosesCount;
+    populateFormSlotSelector(m.periodConfig.firstDoseIndex);
+    calculateEndDose();
+  }
+
+  if (m.type === 'onetime') {
+    document.getElementById('ot-opening-stock').value = m.openingStock || 0;
+  }
+
   document.getElementById('mfc-title').textContent='Edit medicine';
   document.getElementById('med-cancel').style.display='';
-  renderSlots();
   document.getElementById('med-form-card').scrollIntoView({behavior:'smooth',block:'start'});
-  setTimeout(()=>document.getElementById('content').scrollTop=0,100);
 }
 
 function deleteMed(id){
@@ -540,8 +684,9 @@ function deleteMed(id){
   S.medicines=S.medicines.filter(m=>m.id!==id);
   S.purchases=S.purchases.filter(p=>p.medId!==id);
   S.adjustments=S.adjustments.filter(a=>a.medId!==id);
+  S.onetimeLogs=S.onetimeLogs.filter(l=>l.medId!==id);
   const nt={};Object.keys(S.taken).forEach(k=>{if(!k.includes('|'+id+'|'))nt[k]=S.taken[k];});S.taken=nt;
-  sv();renderMeds();fillPurSel();toast('Deleted','var(--red)');
+  sv();renderMeds();fillPurSel();goTo('meds');toast('Deleted','var(--red)');
 }
 
 function renderMeds(){
@@ -550,19 +695,54 @@ function renderMeds(){
   el.innerHTML=S.medicines.map(m=>`
     <div class="med-card">
       <div class="med-hdr">
-        <div><div class="med-name">${m.name}</div><div class="med-sub">${m.unit}</div></div>
+        <div>
+          <div class="med-name">${m.name}</div>
+          <div style="margin-top:2px; display:flex; gap:6px; align-items:center;">
+            <span class="chip ${m.type==='regular'?'':m.type==='period'?'purple':'amber'}" style="padding:1px 6px; font-size:10px">
+              ${m.type==='regular'?'Regular':m.type==='period'?'Specific Period':'One-time Take'}
+            </span>
+            <span class="med-sub">${m.unit}</span>
+          </div>
+        </div>
         <div class="icon-row">
           <button class="ibtn" onclick="editMed(${m.id})" title="Edit">✏️</button>
           <button class="ibtn del" onclick="deleteMed(${m.id})" title="Delete">🗑</button>
         </div>
       </div>
-      <div class="med-chips">${m.doses.map(d=>`<span class="chip">${fmt12(d.time)} · ${d.qty} ${m.unit}</span>`).join('')}</div>
+      <div class="med-chips">
+        ${m.type==='onetime'? `<span class="chip amber">As-needed intake basis count</span>` : m.doses.map(d=>`<span class="chip">${fmt12(d.time)} · ${d.qty} ${m.unit}</span>`).join('')}
+      </div>
     </div>`).join('');
 }
 
-// ═══════════════════════ PURCHASES ════════════════════
+// ── INVENTORY STOCK ENGINE ─────────────────────────
+function calcStock(med){
+  const pur=S.purchases.filter(p=>p.medId===med.id).reduce((s,p)=>s+parseFloat(p.qty),0);
+  const adj=S.adjustments.filter(a=>a.medId===med.id).reduce((s,a)=>s+parseFloat(a.delta),0);
+  const startStock = parseFloat(med.openingStock) || 0;
+  
+  let consumed = 0;
+  if(med.type !== 'onetime') {
+    Object.keys(S.taken).forEach(k=>{
+      const[,mid,time]=k.split('|');
+      if(+mid===med.id){const d=med.doses.find(x=>x.time===time);if(d)consumed+=parseFloat(d.qty);}
+    });
+  } else {
+    S.onetimeLogs.filter(l=>l.medId===med.id).forEach(l=>consumed+=parseFloat(l.qty));
+  }
+  
+  return{pur,adj,consumed,balance:startStock+pur+adj-consumed};
+}
+function dailyTotal(med){return med.doses?med.doses.reduce((s,d)=>s+parseFloat(d.qty),0):0;}
+function daysLeft(med){
+  if(med.type==='onetime') return -1;
+  const{balance}=calcStock(med);const d=dailyTotal(med);if(d<=0||balance<=0)return 0;return balance/d;
+}
+
+// ── PURCHASES HISTORY SECTOR ────────────────────────
 function fillPurSel(){
   const sel=document.getElementById('pur-med');
+  if(!sel) return;
   sel.innerHTML=S.medicines.length
     ?S.medicines.map(m=>`<option value="${m.id}">${m.name}</option>`).join('')
     :'<option value="">— Add medicines first —</option>';
@@ -571,7 +751,8 @@ function fillPurSel(){
 function fillUnit(){
   const id=+document.getElementById('pur-med').value;
   const m=S.medicines.find(x=>x.id===id);
-  document.getElementById('pur-unit').value=m?m.unit:'—';
+  const target = document.getElementById('pur-unit');
+  if(target) target.value=m?m.unit:'—';
 }
 function savePur(){
   const eid=document.getElementById('pur-eid').value;
@@ -615,8 +796,8 @@ function deletePur(id){
 }
 function renderPurs(){
   const el=document.getElementById('pur-list');
+  if(!el) return;
   if(!S.purchases.length){el.innerHTML='<div class="empty">No purchases logged</div>';return;}
-  [...S.purchases].sort((a,b)=>b.date.localeCompare(a.date)).forEach(()=>{});
   el.innerHTML=[...S.purchases].sort((a,b)=>b.date.localeCompare(a.date)).map(p=>{
     const m=S.medicines.find(x=>x.id===p.medId);
     return`<div class="pi">
@@ -631,113 +812,126 @@ function renderPurs(){
   }).join('');
 }
 
-// ═══════════════════════ STOCK ════════════════════════
-function calcStock(med){
-  const pur=S.purchases.filter(p=>p.medId===med.id).reduce((s,p)=>s+parseFloat(p.qty),0);
-  const adj=S.adjustments.filter(a=>a.medId===med.id).reduce((s,a)=>s+parseFloat(a.delta),0);
-  let taken=0;
-  Object.keys(S.taken).forEach(k=>{
-    const[,mid,time]=k.split('|');
-    if(+mid===med.id){const d=med.doses.find(x=>x.time===time);if(d)taken+=parseFloat(d.qty);}
-  });
-  return{pur,adj,taken,balance:pur+adj-taken};
-}
-function dailyTotal(med){return med.doses.reduce((s,d)=>s+parseFloat(d.qty),0);}
-function daysLeft(med){const{balance}=calcStock(med);const d=dailyTotal(med);if(d<=0||balance<=0)return 0;return balance/d;}
-
-// ═══════════════════════ TOGGLE TAKEN ═════════════════
-function toggleTaken(medId,time){
-  const k=takenKey((window.selectedDoseDate||today()),medId,time);
-  if(S.taken[k])delete S.taken[k];else S.taken[k]=true;
-  sv();renderDash();checkBannerClear();
-}
-function checkBannerClear(){
-  const nm=nowMin(),td=today();
-  const any=S.medicines.some(m=>m.doses.some(d=>{
-    const rem=t2m(d.time)+15;
-    return nm>=rem&&!S.taken[takenKey(td,m.id,d.time)];
-  }));
-  if(!any)dimBanner();
+// ── DASHBOARD NAVIGATION TABS VIEW ───────────────────
+function setDashTab(tab) {
+  activeDashTab = tab;
+  document.querySelectorAll('.dash-tab').forEach(btn => btn.classList.remove('on'));
+  document.getElementById('tab-btn-' + tab).classList.add('on');
+  
+  if (tab === 'sched') {
+    document.getElementById('dash-sched-view').style.display = 'block';
+    document.getElementById('dash-onetime-view').style.display = 'none';
+  } else {
+    document.getElementById('dash-sched-view').style.display = 'none';
+    document.getElementById('dash-onetime-view').style.display = 'block';
+    populateOneTimeDropdown();
+    renderOneTimeHistoryList();
+  }
 }
 
-// ═══════════════════════ BALANCE CORRECTION ═══════════
-function openBalModal(medId){
-  const m=S.medicines.find(x=>x.id===medId);if(!m)return;
-  const{balance}=calcStock(m);
-  openModal('Correct balance — '+m.name,`
-    <p style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">
-      Calculated balance: <strong style="color:var(--tx);font-family:'DM Mono'">${Math.max(0,Math.round(balance*100)/100)} ${m.unit}</strong><br>
-      Enter your actual physical count to correct it.
-    </p>
-    <div class="fg"><label class="lbl">Actual balance in hand (${m.unit})</label>
-      <input type="number" id="adj-val" placeholder="Enter real quantity" min="0" step="0.25" inputmode="decimal"/></div>
-    <div class="fg"><label class="lbl">Date</label>
-      <input type="date" id="adj-date" value="${today()}"/></div>
-    <div class="fg"><label class="lbl">Note (optional)</label>
-      <input type="text" id="adj-note" placeholder="e.g. counted stock today" autocomplete="off"/></div>
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btna" onclick="saveAdj(${medId},${balance})">Apply correction</button>
-      <button class="btn btng btn-sm" onclick="closeModal()" style="width:auto;padding:12px 16px">Cancel</button>
-    </div>`);
-}
-function saveAdj(medId,curBal){
-  const val=parseFloat(document.getElementById('adj-val').value);
-  const date=document.getElementById('adj-date').value||today();
-  const note=document.getElementById('adj-note').value.trim();
-  if(isNaN(val)||val<0){toast('Enter valid quantity','var(--red)');return;}
-  S.adjustments.push({id:Date.now(),medId,date,delta:val-curBal,note});
-  sv();closeModal();renderDash();toast('Balance corrected ✓','var(--green)');
+// ── ONE-TIME INTAKES TRANSACTIONS SYSTEM ────────────
+function populateOneTimeDropdown() {
+  const sel = document.getElementById('ot-med-sel');
+  const ots = S.medicines.filter(m => m.type === 'onetime');
+  if(!ots.length) {
+    sel.innerHTML = '<option value="">— No One-Time Meds Added —</option>';
+    return;
+  }
+  sel.innerHTML = ots.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+  updateOtUnit();
 }
 
-// ═══════════════════════ DASHBOARD ════════════════════
-function renderTodayDoses(){
-  const el=document.getElementById('today-list');
-  const viewDate=window.selectedDoseDate||today();
-  if(!S.medicines.length){el.innerHTML='<div class="empty">Add medicines to see schedule</div>';return;}
-  let all=[];
-  S.medicines.forEach(m=>m.doses.forEach(d=>all.push({m,d,key:takenKey(viewDate,m.id,d.time)})));
-  all.sort((a,b)=>a.d.time.localeCompare(b.d.time));
-  const nm=nowMin();
-  const viewingToday=viewDate===today();
-  el.innerHTML=all.map(({m,d,key})=>{
-    const taken=!!S.taken[key];
-    const past=t2m(d.time)<=nm;
-    return`<div class="dt ${!taken&&past?'overdue-row':''}">
-      <button class="dck ${taken?'yes':''}" onclick="toggleTaken(${m.id},'${d.time}')" aria-label="Toggle taken">
-        ${taken?`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`:''}
-      </button>
-      <div class="di">
-        <div class="di-name">${m.name}</div>
-        <div class="di-sub">${fmt12(d.time)}${taken?' · ✓ taken':(viewingToday?(past?' · overdue':' · upcoming'):'')}</div>
+function updateOtUnit() {
+  const mid = +document.getElementById('ot-med-sel').value;
+  const m = S.medicines.find(x=>x.id===mid);
+  document.getElementById('ot-time-input').value = nowHHMM();
+}
+
+function logOneTimeIntake() {
+  const medId = +document.getElementById('ot-med-sel').value;
+  const qty = parseFloat(document.getElementById('ot-qty-input').value) || 1;
+  const time = document.getElementById('ot-time-input').value || nowHHMM();
+  const date = window.selectedDoseDate || today();
+
+  if(!medId) { toast('Select a one-time medicine first','var(--amber)'); return; }
+  
+  S.onetimeLogs.push({ id: Date.now(), medId, date, time, qty });
+  sv();
+  renderOneTimeHistoryList();
+  renderStock();
+  toast('Intake log record saved ✓','var(--green)');
+}
+
+function deleteOneTimeLog(id) {
+  if(!confirm('Remove this log history record?')) return;
+  S.onetimeLogs = S.onetimeLogs.filter(l => l.id !== id);
+  sv();
+  renderOneTimeHistoryList();
+  renderStock();
+}
+
+function renderOneTimeHistoryList() {
+  const el = document.getElementById('onetime-history-list');
+  const viewDate = window.selectedDoseDate || today();
+  const logs = S.onetimeLogs.filter(l => l.date === viewDate);
+  
+  if(!logs.length) {
+    el.innerHTML = '<div class="empty" style="padding:15px 0">No special intake logs on this date</div>';
+    return;
+  }
+  
+  el.innerHTML = logs.map(l => {
+    const m = S.medicines.find(x => x.id === l.medId);
+    return `
+      <div class="dt">
+        <div class="pi-ico" style="background:var(--amberbg)">⚡</div>
+        <div class="di" style="margin-left:8px">
+          <div class="di-name">${m? m.name : 'Deleted medicine'}</div>
+          <div class="di-sub">Taken at ${fmt12(l.time)}</div>
+        </div>
+        <div class="di-qty" style="color:var(--amber)">${l.qty} ${m?m.unit:''}</div>
+        <button class="ibtn del" onclick="deleteOneTimeLog(${l.id})" style="margin-left:6px">✕</button>
       </div>
-      <div class="di-qty">${d.qty} ${m.unit}</div>
-    </div>`;
+    `;
   }).join('');
 }
 
-function renderStock(){
-  const el=document.getElementById('stock-list');
-  if(!S.medicines.length){el.innerHTML='<div class="empty">No medicines added</div>';return;}
-  el.innerHTML=S.medicines.map(m=>{
-    const{balance}=calcStock(m);
-    const bal=Math.max(0,Math.round(balance*100)/100);
-    const days=daysLeft(m);
-    const isOut=bal<=0,isLow=!isOut&&days<3;
-    const cls=isOut?'out':isLow?'low':'ok';
-    const badge=isOut?'<span class="badge-out">Out of stock</span>':isLow?'<span class="badge-low">Low — &lt;3 days</span>':'';
-    const meta=isOut?'Please replenish':isLow?`~${days.toFixed(1)} days left · replenish soon`:`~${days.toFixed(1)} days remaining · ${dailyTotal(m)} ${m.unit}/day`;
-    return`<div class="sc ${cls}">
-      <div class="sc-top">
-        <div class="sc-name">${m.name}</div>
-        <div class="sc-right">${badge}<button class="sc-edit" onclick="openBalModal(${m.id})">Correct</button></div>
-      </div>
-      <div class="sc-qty ${cls}">${bal} <span style="font-size:14px;font-weight:500;font-family:'DM Sans';color:var(--tx2)">${m.unit}</span></div>
-      <div class="sc-meta">${meta}</div>
-    </div>`;
-  }).join('');
+// ── TREATMENT SCHEDULE SPAN TRACKER CHECKER ──────────
+function isPeriodDoseActive(med, doseTime, checkDateStr) {
+  if(med.type !== 'period' || !med.periodConfig) return false;
+  
+  const startDStr = med.periodConfig.startDate;
+  const firstDoseIdx = med.periodConfig.firstDoseIndex;
+  const totalAllowed = med.periodConfig.totalDosesCount;
+  
+  let sortedSlots = [...med.doses]; // already sorted on save
+  let totalSlotsPerDay = sortedSlots.length;
+  
+  let currentDay = new Date(startDStr + 'T00:00:00');
+  let currentSlotOffset = firstDoseIdx;
+  
+  let matchedCount = 0;
+  let activeOnTarget = false;
+  
+  for (let i = 0; i < totalAllowed; i++) {
+    const loopDateStr = currentDay.toISOString().slice(0,10);
+    const loopTimeStr = sortedSlots[currentSlotOffset]?.time;
+    
+    if(loopDateStr === checkDateStr && loopTimeStr === doseTime) {
+      activeOnTarget = true;
+    }
+    
+    currentSlotOffset++;
+    if(currentSlotOffset >= totalSlotsPerDay) {
+      currentSlotOffset = 0;
+      currentDay.setDate(currentDay.getDate() + 1);
+    }
+  }
+  
+  return activeOnTarget;
 }
 
-/* NEW: Integrated Calendar Layout Logic */
+// ── ACCURATE CALENDAR RENDER ENGINE ──────────────────
 function renderCalendar() {
   const grid = document.getElementById('cal-grid-elements');
   const lbl = document.getElementById('cal-month-lbl');
@@ -748,39 +942,44 @@ function renderCalendar() {
   lbl.textContent = calViewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
 
   let html = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(w=>`<div class="cal-wd">${w}</div>`).join('');
-
   const firstDayIndex = new Date(yr,mo,1).getDay();
   const totalDays = new Date(yr,mo+1,0).getDate();
 
-  for(let i=0; i<firstDayIndex; i++){
-    html += `<div class="cal-day empty-day"></div>`;
-  }
+  for(let i=0; i<firstDayIndex; i++){ html += `<div class="cal-day empty-day"></div>`; }
 
   const activeSelDate = window.selectedDoseDate || today();
 
   for(let d=1; d<=totalDays; d++){
     const curString = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    let statusClass = '';
+    let statusClass = 'status-none';
 
-    if(S.medicines.length > 0) {
-      let totalDoseSlots = 0;
+    // Filter relevant targeted color tracking rows
+    let trackingMeds = S.medicines.filter(m => m.type === 'regular' || (m.type === 'period'));
+    
+    if(trackingMeds.length > 0) {
+      let totalExpectedDoseSlots = 0;
       let completedDoseSlots = 0;
 
-      S.medicines.forEach(m => {
+      trackingMeds.forEach(m => {
         m.doses.forEach(dose => {
-          totalDoseSlots++;
-          if(S.taken[takenKey(curString, m.id, dose.time)]) {
-            completedDoseSlots++;
+          if(m.type === 'regular') {
+            totalExpectedDoseSlots++;
+            if(S.taken[takenKey(curString, m.id, dose.time)]) completedDoseSlots++;
+          } else if(m.type === 'period' && isPeriodDoseActive(m, dose.time, curString)) {
+            totalExpectedDoseSlots++;
+            if(S.taken[takenKey(curString, m.id, dose.time)]) completedDoseSlots++;
           }
         });
       });
 
-      if(completedDoseSlots === 0) {
-        statusClass = 'status-red';
-      } else if(completedDoseSlots < totalDoseSlots) {
-        statusClass = 'status-orange';
-      } else {
-        statusClass = 'status-green';
+      if (totalExpectedDoseSlots > 0) {
+        if(completedDoseSlots === 0) {
+          statusClass = 'status-red';
+        } else if(completedDoseSlots < totalExpectedDoseSlots) {
+          statusClass = 'status-orange';
+        } else {
+          statusClass = 'status-green';
+        }
       }
     }
 
@@ -798,245 +997,177 @@ function moveCalMonth(dir) {
 
 function changeDoseDate(v){
   window.selectedDoseDate=v;
-  // Make sure calendar updates its view sync position when selecting a date manually
   const targetDate = new Date(v);
   if(!isNaN(targetDate)) {
     calViewDate.setFullYear(targetDate.getFullYear());
     calViewDate.setMonth(targetDate.getMonth());
   }
   renderTodayDoses();
+  renderOneTimeHistoryList();
   renderCalendar();
+}
+
+// ── TOGGLE TAKEN REGISTRATION ────────────────────────
+function toggleTaken(medId,time){
+  const k=takenKey((window.selectedDoseDate||today()),medId,time);
+  if(S.taken[k])delete S.taken[k];else S.taken[k]=true;
+  sv();
+  renderDash();
+}
+
+// ── SCHEDULE VIEW LIST GENERATOR ─────────────────────
+function renderTodayDoses(){
+  const el=document.getElementById('today-list');
+  const viewDate=window.selectedDoseDate||today();
+  
+  // Filter active scheduled target lists
+  let actionableMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
+  if(!actionableMeds.length){el.innerHTML='<div class="empty">No scheduled medicines active</div>';return;}
+  
+  let all=[];
+  actionableMeds.forEach(m=> {
+    m.doses.forEach(d=> {
+      if(m.type === 'regular') {
+        all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
+      } else if(m.type === 'period' && isPeriodDoseActive(m, d.time, viewDate)) {
+        all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
+      }
+    });
+  });
+  
+  if(!all.length) {
+    el.innerHTML='<div class="empty">No targeted doses due for this date view</div>';
+    return;
+  }
+  
+  all.sort((a,b)=>a.d.time.localeCompare(b.d.time));
+  const nm=nowMin();
+  const viewingToday=viewDate===today();
+  
+  el.innerHTML=all.map(({m,d,key})=>{
+    const taken=!!S.taken[key];
+    const past=t2m(d.time)<=nm;
+    return`<div class="dt ${!taken&&past?'overdue-row':''}">
+      <button class="dck ${taken?'yes':''}" onclick="toggleTaken(${m.id},'${d.time}')" aria-label="Toggle taken">
+        ${taken?`<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+      </button>
+      <div class="di">
+        <div class="di-name">${m.name}</div>
+        <div class="di-sub">${fmt12(d.time)}${taken?' · ✓ taken':(viewingToday?(past?' · overdue':' · upcoming'):'')}</div>
+      </div>
+      <div class="di-qty">${d.qty} ${m.unit}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── BALANCE ADJUSTMENT MODAL ──────────────────────────
+function openBalModal(medId){
+  const m=S.medicines.find(x=>x.id===medId);if(!m)return;
+  const{balance}=calcStock(m);
+  openModal('Correct balance — '+m.name,`
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">
+      Calculated stock balance: <strong style="color:var(--tx);font-family:'DM Mono'">${Math.max(0,Math.round(balance*100)/100)} ${m.unit}</strong><br>
+      Enter physical count balance left to update context history logs.
+    </p>
+    <div class="fg"><label class="lbl">Actual balance in hand (${m.unit})</label>
+      <input type="number" id="adj-val" placeholder="Enter real quantity" min="0" step="0.25" inputmode="decimal"/></div>
+    <div class="fg"><label class="lbl">Date</label>
+      <input type="date" id="adj-date" value="${today()}"/></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btna" onclick="saveAdj(${medId},${balance})">Apply correction</button>
+      <button class="btn btng btn-sm" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+function saveAdj(medId,curBal){
+  const val=parseFloat(document.getElementById('adj-val').value);
+  const date=document.getElementById('adj-date').value||today();
+  if(isNaN(val)||val<0){toast('Enter valid quantity','var(--red)');return;}
+  S.adjustments.push({id:Date.now(),medId,date,delta:val-curBal,note:'Correction'});
+  sv();closeModal();renderDash();toast('Balance corrected ✓','var(--green)');
+}
+
+function renderStock(){
+  const el=document.getElementById('stock-list');
+  if(!S.medicines.length){el.innerHTML='<div class="empty">No stock registered</div>';return;}
+  el.innerHTML=S.medicines.map(m=>{
+    const{balance}=calcStock(m);
+    const bal=Math.max(0,Math.round(balance*100)/100);
+    const isOut=bal<=0;
+    
+    let meta = '';
+    let cls = 'ok';
+    
+    if(m.type === 'onetime') {
+      cls = isOut ? 'out' : 'ok';
+      meta = isOut ? 'Out of stock — replenish needed' : 'Stored in inventory asset stock';
+    } else {
+      const days=daysLeft(m);
+      const isLow=!isOut && days<3;
+      cls=isOut?'out':isLow?'low':'ok';
+      meta=isOut?'Please replenish':isLow?`~${days.toFixed(1)} days left`:`~${days.toFixed(1)} days remaining`;
+    }
+    
+    const badge=isOut?'<span class="badge-out">Out of stock</span>':'';
+    return`<div class="sc ${cls}">
+      <div class="sc-top">
+        <div class="sc-name">${m.name}</div>
+        <div class="sc-right">${badge}<button class="sc-edit" onclick="openBalModal(${m.id})">Correct</button></div>
+      </div>
+      <div class="sc-qty ${cls}">${bal} <span style="font-size:14px;font-weight:500;font-family:'DM Sans';color:var(--tx2)">${m.unit}</span></div>
+      <div class="sc-meta">${meta}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderDash(){
  if(!window.selectedDoseDate) window.selectedDoseDate=today();
  const dd = document.getElementById('dose-date');
  if(dd) dd.value=window.selectedDoseDate;
+ setDashTab(activeDashTab);
  renderTodayDoses();renderStock();renderCalendar();
 }
 
-// ═══════════════════════ NOTIFICATIONS ════════════════
-const REMIND_AFTER=15; // minutes
-let shownToday={};
-
-function notifPerm(){return('Notification' in window)?Notification.permission:'unsupported';}
-
-function checkNPCard(){
-  const wrap=document.getElementById('np-wrap');
-  const stored=localStorage.getItem('mtrk_np');
-  if(notifPerm()==='granted'||notifPerm()==='unsupported'||stored==='no'){
-    wrap.innerHTML='';return;
-  }
-  wrap.innerHTML=`<div class="np-card">
-    <div class="np-inner">
-      <div class="np-icon">🔔</div>
-      <div class="np-body">
-        <strong>Enable dose reminders</strong>
-        <p>Get a notification 15 min after a missed dose, even when the app is in the background.</p>
-        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          <button class="btn btnp btn-sm" style="width:auto" onclick="askNotif()">Allow notifications</button>
-          <button class="btn btng btn-sm" style="width:auto" onclick="skipNotif()">Not now</button>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-async function askNotif(){
-  if(!('Notification' in window)){toast('Notifications not supported on this browser','var(--amber)');return;}
-  const r=await Notification.requestPermission();
-  localStorage.setItem('mtrk_np',r==='granted'?'yes':'no');
-  if(r==='granted'){toast('Notifications enabled ✓','var(--green)');scheduleNotifs();}
-  else toast('Using in-app reminders instead','var(--amber)');
-  document.getElementById('np-wrap').innerHTML='';
-}
-function skipNotif(){localStorage.setItem('mtrk_np','no');document.getElementById('np-wrap').innerHTML='';}
-
-function pushNotif(title,body){
-  if(notifPerm()!=='granted')return;
-  try{new Notification(title,{body,tag:'mtrk-dose',renotify:true});}catch(e){}
-}
-
-function scheduleNotifs(){
-  if(notifPerm()!=='granted')return;
-  const now=new Date(),td=today();
-  S.medicines.forEach(m=>{
-    m.doses.forEach(d=>{
-      if(S.taken[takenKey(td,m.id,d.time)])return;
-      const[hh,mm]=d.time.split(':');
-      const fire=new Date(now.getFullYear(),now.getMonth(),now.getDate(),+hh,+mm+REMIND_AFTER,0);
-      const ms=fire-now;
-      if(ms<0)return;
-      const lk='mtrk_notif_'+td+'_'+m.id+'_'+d.time;
-      if(localStorage.getItem(lk))return;
-      setTimeout(()=>{
-        if(!S.taken[takenKey(today(),m.id,d.time)]){
-          pushNotif('💊 Missed dose — '+m.name,`${m.name}: ${d.qty} ${m.unit} was due at ${fmt12(d.time)}`);
-          localStorage.setItem(lk,'1');
-        }
-      },ms);
-    });
-  });
-}
-
-// In-app banner: runs every minute
-let lastReminderDay='';
-function checkInAppReminders(){
-  const td=today();
-  if(lastReminderDay!==td){shownToday={};lastReminderDay=td;scheduleNotifs();}
-  const nm=nowMin();
-  const overdue=[];
-  S.medicines.forEach(m=>{
-    m.doses.forEach(d=>{
-      const remMin=t2m(d.time)+REMIND_AFTER;
-      if(nm<remMin)return;
-      if(S.taken[takenKey(td,m.id,d.time)])return;
-      const k=td+'|'+m.id+'|'+d.time;
-      if(shownToday[k])return;
-      overdue.push({m,d,k});
-    });
-  });
-  if(!overdue.length)return;
-  overdue.forEach(({k,m,d})=>{
-    shownToday[k]=true;
-    // push notif if permitted
-    const lk='mtrk_notif_'+k;
-    if(notifPerm()==='granted'&&!localStorage.getItem(lk)){
-      pushNotif('💊 Missed dose — '+m.name,`${m.name}: ${d.qty} ${m.unit} was due at ${fmt12(d.time)}`);
-      localStorage.setItem(lk,'1');
-    }
-  });
-  // show banner
-  document.getElementById('rb-list').innerHTML=overdue.map(({m,d})=>
-    `<div class="rb-item">${m.name} — ${d.qty} ${m.unit} (due ${fmt12(d.time)})</div>`
-  ).join('');
-  document.getElementById('rbanner').classList.add('on');
-  setTimeout(dimBanner,14000);
-}
-function dimBanner(){document.getElementById('rbanner').classList.remove('on');}
-
-// ═══════════════════════ EXPORT / IMPORT ══════════════
+// ── EXPORT / IMPORT BACKUPS ──────────────────────────
 function updateExportStats(){
   const el=document.getElementById('export-stats');
   if(!el)return;
-  el.textContent=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} dose records`;
+  el.textContent=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} logs`;
 }
-
 function exportData(){
-  const payload={
-    version:'mtrk3',
-    exportedAt:new Date().toISOString(),
-    medicines:S.medicines,
-    purchases:S.purchases,
-    taken:S.taken,
-    adjustments:S.adjustments
-  };
+  const payload={ version:'mtrk_v4', exportedAt:new Date().toISOString(), ...S };
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='medtracker-backup-'+today()+'.json';
+  const a=document.createElement('a'); a.href=url; a.download='medtracker-backup-'+today()+'.json';
   document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
   toast('Exported ✓','var(--green)');
 }
-
 function importData(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
     try{
       const data=JSON.parse(ev.target.result);
-      if(!data.medicines||!data.purchases){toast('Invalid backup file','var(--red)');return;}
-      if(!confirm('Replace all current data with this backup? This cannot be undone.'))return;
+      if(!data.medicines){toast('Invalid backup file','var(--red)');return;}
+      if(!confirm('Replace all data? This cannot be undone.'))return;
       S.medicines=data.medicines||[];
       S.purchases=data.purchases||[];
       S.taken=data.taken||{};
       S.adjustments=data.adjustments||[];
-      sv();
-      renderDash();
-      updateExportStats();
-      toast('Imported successfully! '+S.medicines.length+' medicines loaded.','var(--green)');
-      e.target.value='';
-    }catch(err){toast('Could not read file — is it a valid backup?','var(--red)');}
+      S.onetimeLogs=data.onetimeLogs||[];
+      sv(); renderDash(); updateExportStats();
+      toast('Imported successfully!','var(--green)');
+    }catch(err){toast('Read error','var(--red)');}
   };
   reader.readAsText(file);
 }
 
-// ═══════════════════════ PWA MANIFEST ═════════════════
-(function injectManifest(){
-  const manifest={
-    name:'MedTracker',short_name:'MedTracker',
-    start_url:location.pathname,display:'standalone',
-    background_color:'#080e1c',theme_color:'#080e1c',
-    description:'Personal medicine tracker with reminders',
-    icons:[
-      {src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230f172a'/><text y='360' x='256' font-size='320' text-anchor='middle'>&#x1F48A;</text></svg>",
-       sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
-    ]
-  };
-  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-  document.getElementById('pwa-manifest').href=URL.createObjectURL(blob);
-})();
-
-// ═══════════════════════ INSTALL PROMPT ═══════════════
-let deferredInstall=null;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredInstall=e;
-  // show a subtle install hint in backup tab
-  const hint=document.createElement('div');
-  hint.className='info-box';
-  hint.style.marginTop='0';
-  hint.innerHTML='📲 <strong>Add to home screen</strong> — tap the banner below or use your browser\'s "Add to Home Screen" option for offline access.';
-  hint.id='install-hint';
-  const bk=document.getElementById('pg-bk');
-  if(bk)bk.querySelector('.card').prepend(hint);
-});
-
-// ═══════════════════════ INIT ═════════════════════════
+// ── INITIALIZATION ──────────────────────────────────
 ld();
 document.getElementById('pur-date').value=today();
+document.getElementById('p-start-date').value=today();
 fillPurSel();
 renderDash();
-checkNPCard();
-// Start reminder polling
-checkInAppReminders();
-setInterval(checkInAppReminders,60000);
-// Schedule push notifications on load
-if(notifPerm()==='granted')scheduleNotifs();
-</script>
-
-<!-- SERVICE WORKER (offline on both Android and iOS) -->
-<script>
-if('serviceWorker' in navigator){
-  const sw=`
-const CACHE='mtrk-v3';
-const URL_TO_CACHE=self.location.pathname.replace('/sw.js','').replace('sw','')+'';
-self.addEventListener('install',e=>{
-  self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE).then(c=>{
-      try{return c.add(self.registration.scope);}catch(err){return;}
-    })
-  );
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  return self.clients.claim();
-});
-self.addEventListener('fetch',e=>{
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-    if(res&&res.status===200&&e.request.method==='GET'){
-      const clone=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
-    }
-    return res;
-  }).catch(()=>caches.match(e.request))));
-});`;
-  const swBlob=new Blob([sw],{type:'application/javascript'});
-  const swURL=URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swURL,{scope:'./'}).catch(()=>{});
-}
 </script>
 </body>
 </html>
