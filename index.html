@@ -8,11 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="MedTracker"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#080e1c"/>
-
-<!-- EMBEDDED HOMESCREEN APP ICONS -->
-<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080e1c'/><rect width='150' height='150' x='15' y='15' rx='32' fill='%23101624' stroke='%231e2f47' stroke-width='2'/><path d='M90 50v80M50 90h80' stroke='%233b82f6' stroke-width='24' stroke-linecap='round'/></svg>"/>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080e1c'/><rect width='150' height='150' x='15' y='15' rx='32' fill='%23101624' stroke='%231e2f47' stroke-width='2'/><path d='M90 50v80M50 90h80' stroke='%233b82f6' stroke-width='24' stroke-linecap='round'/></svg>"/>
-
 <link rel="manifest" id="pwa-manifest"/>
 <title>MedTracker</title>
 <style>
@@ -34,15 +29,11 @@
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,-apple-system,sans-serif;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
 
-/* HEADER WITH PREMIUM SVG ICON */
+/* HEADER */
 #hdr{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;
   padding:calc(var(--st)+10px) 16px 10px;background:var(--bg);border-bottom:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;gap:8px}
-#hdr h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:10px;white-space:nowrap;letter-spacing:-0.3px}
-.hdr-icon{width:28px;height:28px;background:linear-gradient(135deg, #1e40af, #3b82f6);
-  border-radius:8px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 8px rgba(96,165,250,0.25);border:1px solid rgba(255,255,255,0.1)}
-.hdr-icon svg{width:16px;height:16px;fill:none;stroke:#ffffff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+#hdr h1{font-size:17px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
 #clock{font-size:12px;font-weight:500;color:var(--tx2);font-family:'DM Mono',monospace;
   background:var(--s2);padding:5px 10px;border-radius:999px;border:1px solid var(--bd2);white-space:nowrap;flex-shrink:0}
 
@@ -87,7 +78,7 @@ input[type=time],input[type=date]{font-size:14px;color-scheme:dark}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b9cc0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 11px center;padding-right:34px}
 input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
-.frow(display:flex;gap:8px)
+.frow{display:flex;gap:8px}
 .frow>.fg{flex:1;margin-bottom:0}
 
 /* BUTTONS */
@@ -134,12 +125,12 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .sc.ok::before{background:var(--green)}.sc.low::before{background:var(--amber)}.sc.out::before{background:var(--red)}
 .sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:8px}
 .sc-name{font-size:15px;font-weight:600}
-.sc-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
-.sc-edit{background:none;border:1px solid var(--bd2);color:var(--tx3);cursor:pointer;font-size:12px;padding:4px 9px;border-radius:7px;font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap}
-.sc-edit:active{color:var(--blue);border-color:var(--blue)}
 .sc-qty{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-.5px;margin:2px 0 3px}
 .sc-qty.ok{color:var(--green)}.sc-qty.low{color:var(--amber)}.sc-qty.out{color:var(--red)}
 .sc-meta{font-size:12px;color:var(--tx3)}
+.sc-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.sc-edit{background:none;border:1px solid var(--bd2);color:var(--tx3);cursor:pointer;font-size:12px;padding:4px 9px;border-radius:7px;font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap}
+.sc-edit:active{color:var(--blue);border-color:var(--blue)}
 .badge-low{background:var(--amberbg);border:1px solid rgba(251,191,36,.25);color:var(--amber);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .badge-out{background:var(--redbg);border:1px solid rgba(248,113,113,.25);color:var(--red);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
 
@@ -229,14 +220,9 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 </head>
 <body>
 
-<!-- HEADER WITH EXPLICIT SVGS SHIELD ACCENT BOX -->
+<!-- HEADER -->
 <div id="hdr">
-  <h1>
-    <div class="hdr-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 8v8M9 12h6"/></svg>
-    </div>
-    MedTracker
-  </h1>
+  <h1><span>💊</span>MedTracker</h1>
   <div id="clock">--:-- --</div>
 </div>
 
@@ -295,7 +281,7 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
             <input type="number" id="ot-qty-input" value="1" min="0.25" step="0.25" style="width:75px"/>
             <input type="time" id="ot-time-input" style="width:105px"/>
           </div>
-          <button class="btn btnp" style="width:100%;margin-top:8px" onclick="logOneTimeIntake()">Save Record</button>
+          <button class="btn btnp btn-sm" style="width:100%;margin-top:8px" onclick="logOneTimeIntake()">Save Record</button>
         </div>
         <div class="divider" style="height:1px;background:var(--bd);margin:12px 0"></div>
         <div class="ctitle" style="font-size:10px;color:var(--tx2)">Intake Logs Recorded Today</div>
@@ -666,9 +652,9 @@ function editMed(id){
   document.getElementById('med-eid').value=id;
   document.getElementById('med-name').value=m.name;
   document.getElementById('med-unit').value=m.unit;
-  document.getElementById('med-type').value=m.type || 'regular';
+  document.getElementById('med-type').value=m.type;
   
-  toggleTypeFields(document.getElementById('med-type').value);
+  toggleTypeFields(m.type);
   
   if (m.type !== 'onetime') {
     slots = m.doses.map(d=>({time:d.time,qty:d.qty}));
@@ -710,8 +696,8 @@ function renderMeds(){
         <div>
           <div class="med-name">${m.name}</div>
           <div style="margin-top:2px; display:flex; gap:6px; align-items:center;">
-            <span class="chip ${(!m.type || m.type==='regular')?'':m.type==='period'?'purple':'amber'}" style="padding:1px 6px; font-size:10px">
-              ${(!m.type || m.type==='regular')?'Regular':m.type==='period'?'Specific Period':'One-time Take'}
+            <span class="chip ${m.type==='regular'?'':m.type==='period'?'purple':'amber'}" style="padding:1px 6px; font-size:10px">
+              ${m.type==='regular'?'Regular':m.type==='period'?'Specific Period':'One-time Take'}
             </span>
             <span class="med-sub">${m.unit}</span>
           </div>
@@ -853,11 +839,8 @@ function populateOneTimeDropdown() {
   updateOtUnit();
 }
 
-// Fallback protection handler logic
 function updateOtUnit() {
-  const selectEl = document.getElementById('ot-med-sel');
-  if (!selectEl || !selectEl.value) return;
-  const mid = +selectEl.value;
+  const mid = +document.getElementById('ot-med-sel').value;
   const m = S.medicines.find(x=>x.id===mid);
   document.getElementById('ot-time-input').value = nowHHMM();
 }
@@ -967,7 +950,7 @@ function renderCalendar() {
     const curString = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     let statusClass = 'status-none';
 
-    let trackingMeds = S.medicines.filter(m => !m.type || m.type === 'regular' || m.type === 'period');
+    let trackingMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
     
     if(trackingMeds.length > 0) {
       let totalExpectedDoseSlots = 0;
@@ -975,7 +958,7 @@ function renderCalendar() {
 
       trackingMeds.forEach(m => {
         m.doses.forEach(dose => {
-          if(!m.type || m.type === 'regular') {
+          if(m.type === 'regular') {
             totalExpectedDoseSlots++;
             if(S.taken[takenKey(curString, m.id, dose.time)]) completedDoseSlots++;
           } else if(m.type === 'period' && isPeriodDoseActive(m, dose.time, curString)) {
@@ -1033,21 +1016,18 @@ function renderTodayDoses(){
   const el=document.getElementById('today-list');
   const viewDate=window.selectedDoseDate||today();
   
-  // Protect backward compatibility: match regular entries or those explicitly missing layout tags
-  let actionableMeds = S.medicines.filter(m => !m.type || m.type === 'regular' || m.type === 'period');
+  let actionableMeds = S.medicines.filter(m => m.type === 'regular' || m.type === 'period');
   if(!actionableMeds.length){el.innerHTML='<div class="empty">No scheduled medicines added yet</div>';return;}
   
   let all=[];
   actionableMeds.forEach(m=> {
-    if (m.doses) {
-      m.doses.forEach(d=> {
-        if(!m.type || m.type === 'regular') {
-          all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
-        } else if(m.type === 'period' && isPeriodDoseActive(m, d.time, viewDate)) {
-          all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
-        }
-      });
-    }
+    m.doses.forEach(d=> {
+      if(m.type === 'regular') {
+        all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
+      } else if(m.type === 'period' && isPeriodDoseActive(m, d.time, viewDate)) {
+        all.push({m,d,key:takenKey(viewDate,m.id,d.time)});
+      }
+    });
   });
   
   if(!all.length) {
@@ -1146,7 +1126,7 @@ function renderDash(){
 function updateExportStats(){
   const el=document.getElementById('export-stats');
   if(!el)return;
-  el.textContent seaword=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} logs`;
+  el.textContent=`${S.medicines.length} medicines · ${S.purchases.length} purchases · ${Object.keys(S.taken).length} logs`;
 }
 function exportData(){
   const payload={ version:'mtrk_v4', exportedAt:new Date().toISOString(), ...S };
@@ -1176,24 +1156,6 @@ function importData(e){
   };
   reader.readAsText(file);
 }
-
-// ── PWA AUTOMATED INLINE EMBEDDED MANIFEST GENERATOR ──
-(function injectManifest(){
-  const manifest={
-    name:'MedTracker',short_name:'MedTracker',
-    start_url:location.pathname,display:'standalone',
-    background_color:'#080e1c',theme_color:'#080e1c',
-    description:'Personal medicine tracker with reminders',
-    icons:[
-      {
-        src:"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23080e1c'/><rect width='432' height='432' x='40' y='40' rx='90' fill='%23101624' stroke='%231e2f47' stroke-width='6'/><path d='M256 130v252M130 256h252' stroke='%233b82f6' stroke-width='64' stroke-linecap='round'/></svg>",
-        sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'
-      }
-    ]
-  };
-  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-  document.getElementById('pwa-manifest').href=URL.createObjectURL(blob);
-})();
 
 // ── INITIALIZATION ──────────────────────────────────
 loadState();
