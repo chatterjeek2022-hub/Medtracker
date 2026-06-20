@@ -8,6 +8,11 @@
 <meta name="apple-mobile-web-app-title" content="MedTracker"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#080e1c"/>
+
+<!-- EMBEDDED HOMESCREEN APP ICONS (Fixes the generic letter "M" issue) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080e1c'/><rect width='150' height='150' x='15' y='15' rx='32' fill='%23101624' stroke='%231e2f47' stroke-width='2'/><path d='M90 50v80M50 90h80' stroke='%233b82f6' stroke-width='24' stroke-linecap='round'/></svg>"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080e1c'/><rect width='150' height='150' x='15' y='15' rx='32' fill='%23101624' stroke='%231e2f47' stroke-width='2'/><path d='M90 50v80M50 90h80' stroke='%233b82f6' stroke-width='24' stroke-linecap='round'/></svg>"/>
+
 <link rel="manifest" id="pwa-manifest"/>
 <title>MedTracker</title>
 <style>
@@ -129,12 +134,12 @@ input[readonly]{background:var(--s3);color:var(--tx3);cursor:default}
 .sc.ok::before{background:var(--green)}.sc.low::before{background:var(--amber)}.sc.out::before{background:var(--red)}
 .sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:8px}
 .sc-name{font-size:15px;font-weight:600}
-.sc-qty{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-.5px;margin:2px 0 3px}
-.sc-qty.ok{color:var(--green)}.sc-qty.low{color:var(--amber)}.sc-qty.out{color:var(--red)}
-.sc-meta{font-size:12px;color:var(--tx3)}
 .sc-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
 .sc-edit{background:none;border:1px solid var(--bd2);color:var(--tx3);cursor:pointer;font-size:12px;padding:4px 9px;border-radius:7px;font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap}
 .sc-edit:active{color:var(--blue);border-color:var(--blue)}
+.sc-qty{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-.5px;margin:2px 0 3px}
+.sc-qty.ok{color:var(--green)}.sc-qty.low{color:var(--amber)}.sc-qty.out{color:var(--red)}
+.sc-meta{font-size:12px;color:var(--tx3)}
 .badge-low{background:var(--amberbg);border:1px solid rgba(251,191,36,.25);color:var(--amber);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .badge-out{background:var(--redbg);border:1px solid rgba(248,113,113,.25);color:var(--red);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
 
@@ -1165,6 +1170,24 @@ function importData(e){
   };
   reader.readAsText(file);
 }
+
+// ── PWA AUTOMATED INLINE EMBEDDED MANIFEST GENERATOR ──
+(function injectManifest(){
+  const manifest={
+    name:'MedTracker',short_name:'MedTracker',
+    start_url:location.pathname,display:'standalone',
+    background_color:'#080e1c',theme_color:'#080e1c',
+    description:'Personal medicine tracker with reminders',
+    icons:[
+      {
+        src:"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23080e1c'/><rect width='432' height='432' x='40' y='40' rx='90' fill='%23101624' stroke='%231e2f47' stroke-width='6'/><path d='M256 130v252M130 256h252' stroke='%233b82f6' stroke-width='64' stroke-linecap='round'/></svg>",
+        sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'
+      }
+    ]
+  };
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(blob);
+})();
 
 // ── INITIALIZATION ──────────────────────────────────
 loadState();
